@@ -19,11 +19,11 @@ export const CONTACT_INFO = {
 };
 
 export const SOCIAL_LINKS = {
-  facebook: "https://www.facebook.com/share/1DqRa66SB6/",
+  facebook: "https://www.facebook.com/share/17xnvWiB6X/",
   linkedin: "#",
   whatsapp: "https://wa.me/918957721120",
-  instagram: "https://www.instagram.com/newadarsh.manpower?igsh=MTh1dzh4YzdmN3R3aA==",
-  youtube: "https://youtube.com/@adarshtechnicalinstitute12?si=7dPB2akAr4Yzv4Oy"
+  instagram: "https://www.instagram.com/new_adarsh_manpower_consultant?utm_source=qr&igsi=N3FncDZna3p",
+  youtube: "https://youtube.com/@new_adarsh_manpower_consultant?si=3k_8eN97d4qJa3u6"
 };
 
 export const NAV_LINKS = [
