@@ -9,7 +9,7 @@ export const WhyUs = () => {
   const testimonials = [
     {
       stars: '★★★★★',
-      text: '"New Adarsh provided me with excellent guidance throughout my overseas job placement. The entire process was transparent and hassle-free. Highly recommended!"',
+      text: '"RKR Global Path provided me with excellent guidance throughout my overseas job placement. The entire process was transparent and hassle-free. Highly recommended!"',
       name: 'Rajesh Kumar',
       role: 'Healthcare Professional, Dubai'
     },

@@ -40,7 +40,7 @@ const upload = multer({
  * multipart/form-data: { name, email, phone, job_position, experience, message, resume }
  * Mirrors apply.php
  */
-router.post('/api/apply.php', (req, res) => {
+router.post(['/api/apply.php', '/api/apply'], (req, res) => {
   upload.single('resume')(req, res, async (err) => {
     // Handle multer errors (file type / size)
     if (err instanceof multer.MulterError) {

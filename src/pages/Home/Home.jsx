@@ -1,519 +1,687 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import Modal from '../../components/common/Modal/Modal';
-import { COMPANY_NAME, CONTACT_INFO } from '../../utils/constants';
-import useScrollAnimation from '../../hooks/useScrollAnimation';
+import { COMPANY_NAME, CONTACT_INFO, LICENSE_NO, RA_NO, ESTABLISHED_YEAR } from '../../utils/constants';
 
+/* ── Scroll Reveal Hook ── */
+function useReveal() {
+  useEffect(() => {
+    const els = document.querySelectorAll('.scroll-reveal, .scroll-reveal-left, .scroll-reveal-right, .scroll-scale');
+    const io = new IntersectionObserver(
+      (entries) => entries.forEach((e) => { if (e.isIntersecting) e.target.classList.add('is-visible'); }),
+      { threshold: 0.1, rootMargin: '0px 0px -30px 0px' }
+    );
+    els.forEach((el) => io.observe(el));
+    return () => io.disconnect();
+  }, []);
+}
+
+/* ── Data ── */
+const ALL_SERVICES = [
+  { num: '01', title: 'Overseas Manpower Recruitment', desc: 'End-to-end international recruitment and placement of skilled, semi-skilled, and unskilled workforce to verified overseas employers across the Gulf Region and international markets.' },
+  { num: '02', title: 'Skilled Manpower Sourcing', desc: 'Sourcing certified engineers, welders, electricians, plumbers, masons, riggers, and technical specialists from talent hubs across India.' },
+  { num: '03', title: 'Semi-Skilled Manpower Sourcing', desc: 'Sourcing factory operators, security personnel, cooks, warehouse staff, and equipment operators suited for industrial and commercial operations.' },
+  { num: '04', title: 'Unskilled Workforce Supply', desc: 'Deploying general labourers, site helpers, cleaners, farm hands, and logistics support staff with rapid turnaround.' },
+  { num: '05', title: 'Client Interview Coordination', desc: 'Organizing structured in-person trade testing, candidate screening, and virtual interview sessions for visiting delegate teams.' },
+  { num: '06', title: 'Visa & Emigration Support', desc: 'Complete handling of employment visa applications, government emigration clearance, and legal attestation workflows.' },
+  { num: '07', title: 'Medical Coordination', desc: 'Scheduling and tracking mandatory pre-deployment medical fitness examinations at GAMCA / NAMCA approved medical centers.' },
+  { num: '08', title: 'Travel & Deployment Logistics', desc: 'Flight booking, group movement management, airport departure assistance, and arrival briefing coordination with employers.' },
+  { num: '09', title: 'Documentation & Attestation', desc: 'Educational, commercial, and legal document verification, apostille services, and police clearance certificate (PCC) assistance.' },
+  { num: '10', title: 'Pre-Departure Briefing & Welfare', desc: 'Orienting workers on destination country labor laws, cultural norms, safety guidelines, and ongoing candidate welfare support.' },
+];
+
+const MANPOWER_DATA = {
+  skilled: [
+    'Civil Engineers', 'Electrical Engineers', 'Mechanical Engineers',
+    'Welders (3G / 6G / TIG / MIG)', 'Pipefitters & Fabricators', 'Electricians (Industrial & Commercial)',
+    'Plumbers & Pipe Mechanics', 'Masons & Bricklayers', 'Steel Fixers & Bar Benders',
+    'Heavy Equipment Operators', 'Scaffolders & Riggers', 'Carpenters (Shuttering & Furniture)',
+    'HVAC Technicians', 'Auto Mechanics & Technicians', 'Industrial Painters', 'Safety Officers'
+  ],
+  semiSkilled: [
+    'Security Guards & Officers', 'Factory Line Operators', 'Machine Mechanics Helpers',
+    'Cooks & Kitchen Specialists', 'Forklift Operators', 'Warehouse Staff',
+    'Light Vehicle Drivers', 'Housekeeping Supervisors', 'Electrician Assistants',
+    'Plumbing Helpers', 'AC Technician Helpers', 'Painter Assistants'
+  ],
+  unskilled: [
+    'General Site Labourers', 'Cleaners & Janitors', 'Agricultural Workers',
+    'Packers & Cargo Handlers', 'Loading & Unloading Staff', 'Domestic Support Staff',
+    'Facility Maintenance Helpers', 'Office Assistants', 'Watchmen & Groundskeepers',
+    'Sanitation Workers', 'Fleet Washers', 'Kitchen Stewards'
+  ],
+};
+
+const JOURNEY_STEPS = [
+  { num: '01', title: 'Requirement & Sourcing', desc: 'Client submits workforce requirements; candidate database is screened and shortlisted.' },
+  { num: '02', title: 'Trade Test & Screening', desc: 'Candidates undergo practical trade evaluations and credentials verification.' },
+  { num: '03', title: 'Client Interview', desc: 'Employers select candidates via direct in-person interviews or virtual delegations.' },
+  { num: '04', title: 'Selection & Offer', desc: 'Selected candidates receive formal job offers, terms, and employment contracts.' },
+  { num: '05', title: 'Medical Examination', desc: 'Mandatory GAMCA/NAMCA approved medical fitness certification is completed.' },
+  { num: '06', title: 'Visa Processing', desc: 'Embassy visa application, stamping, and emigration approval are executed.' },
+  { num: '07', title: 'Pre-Departure Orientation', desc: 'Comprehensive briefing on workplace guidelines, safety, and legal rights.' },
+  { num: '08', title: 'Flight & Deployment', desc: 'Ticketing, airport coordination, and official deployment to destination country.' },
+];
+
+const STRENGTHS = [
+  'Skilled & Reliable Manpower Sourcing',
+  'Extensive Verified Candidate Database',
+  'Experienced International Recruitment Specialists',
+  'Rigorous Trade Testing & Screening',
+  'Swift Client Interview Delegation',
+  'Transparent & Ethical Recruitment Standards',
+  'Complete Documentation & Legal Attestation',
+  'GAMCA Medical & Visa Assistance',
+  'Punctual Overseas Deployment Support',
+  'Direct Client Representative Coordination',
+  'Strict Quality Control & Candidate Fit',
+  'Government Licensed Overseas Employment Support',
+];
+
+const DESTINATIONS = [
+  { name: 'UAE / Dubai', region: 'Gulf Region' },
+  { name: 'Saudi Arabia', region: 'Gulf Region' },
+  { name: 'Qatar', region: 'Gulf Region' },
+  { name: 'Oman', region: 'Gulf Region' },
+  { name: 'Kuwait', region: 'Gulf Region' },
+  { name: 'Bahrain', region: 'Gulf Region' },
+  { name: 'Sri Lanka', region: 'South Asia' },
+  { name: 'Russia', region: 'Eurasia' },
+  { name: 'Other Markets', region: 'Global' },
+];
+
+/* ─────────────────────────────────────────────── */
 export const Home = () => {
   const [modalOpen, setModalOpen] = useState(false);
   const [modalContent, setModalContent] = useState({ src: '', title: '' });
-  const [shopPreviewLoading, setShopPreviewLoading] = useState(true);
+  const [activeService, setActiveService] = useState(0);
+  const [activeManpowerTab, setActiveManpowerTab] = useState('skilled');
+  const [hoveredStrength, setHoveredStrength] = useState(null);
 
-  useScrollAnimation();
+  useReveal();
 
-  const openCertModal = (src, title) => {
-    setModalContent({ src, title });
-    setModalOpen(true);
-  };
+  const openCertModal = (src, title) => { setModalContent({ src, title }); setModalOpen(true); };
+
+  const manpowerTabs = [
+    { key: 'skilled', label: 'Skilled', count: MANPOWER_DATA.skilled.length },
+    { key: 'semiSkilled', label: 'Semi-Skilled', count: MANPOWER_DATA.semiSkilled.length },
+    { key: 'unskilled', label: 'Unskilled', count: MANPOWER_DATA.unskilled.length },
+  ];
 
   return (
-    <div>
-      {/* Hero Section */}
-      <section className="relative overflow-hidden text-white pt-32 pb-24 md:pt-40 md:pb-36 bg-cover bg-center" style={{ backgroundImage: "url('/images/hero_city_buildings.jpg')" }}>
-        <div className="absolute inset-0 bg-gradient-to-r from-slate-950/95 via-blue-950/90 to-blue-900/80 pointer-events-none" />
-        
-        <div className="absolute w-[300px] h-[300px] bg-amber-500/10 rounded-full -top-[100px] -right-[100px] pointer-events-none" />
-        <div className="absolute w-[200px] h-[200px] bg-amber-500/5 rounded-full -bottom-[50px] -left-[50px] pointer-events-none" />
-        
-        <div className="container mx-auto px-4 max-w-6xl relative z-10">
-          <div className="text-center mb-12 animate-fade-in-up">
-            <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold mb-6 leading-tight font-heading">
-              <span className="text-amber-300">Your Gateway to Global Opportunities</span>
-            </h1>
-            
-            <p className="text-xl text-blue-100 mb-8 max-w-2xl mx-auto leading-relaxed">
-              Connect skilled Indian professionals with trusted international employers. We specialize in overseas recruitment across Middle East, Europe, Asia & Gulf regions.
+    <div style={{ background: 'var(--cream)', overflowX: 'hidden' }}>
+
+      {/* ═══════════════════════════════
+          HERO — Editorial & Purposeful
+      ═══════════════════════════════ */}
+      <section id="home" style={{ display: 'grid', gridTemplateColumns: '12fr 10fr', minHeight: '85vh', background: 'var(--slate)' }} className="hero-section">
+
+        {/* LEFT: Text & Content */}
+        <div style={{ padding: '80px 60px 80px 80px', display: 'flex', flexDirection: 'column', justifyContent: 'center', position: 'relative', zIndex: 2 }} className="hero-left">
+
+          <div style={{ display: 'inline-flex', alignItems: 'center', gap: 8, marginBottom: 28 }}>
+            <span style={{ width: 6, height: 6, borderRadius: '50%', background: 'var(--gold)' }} />
+            <span style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: 11, fontWeight: 700, color: 'var(--gold)', letterSpacing: '0.2em', textTransform: 'uppercase' }}>
+              Global Manpower Solutions
+            </span>
+          </div>
+
+          <h1 style={{ fontFamily: "'Playfair Display', serif", fontSize: 'clamp(36px, 4.2vw, 60px)', fontWeight: 700, color: '#fff', lineHeight: 1.15, letterSpacing: '-0.02em', marginBottom: 24 }}>
+            Connecting the <em style={{ color: 'var(--gold)', fontStyle: 'italic' }}>Right People</em>
+            <br />With the Right Opportunities.
+          </h1>
+
+          <p style={{ color: 'rgba(255,255,255,0.7)', fontSize: 15.5, lineHeight: 1.75, maxWidth: 480, marginBottom: 40, fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
+            A premier MEA-licensed manpower agency delivering ethical recruitment, candidate trade testing, and overseas deployment solutions for international infrastructure, industrial, and commercial enterprises.
+          </p>
+
+          <div style={{ display: 'flex', gap: 14, flexWrap: 'wrap', marginBottom: 48 }}>
+            <Link to="/contact-info" id="hero-get-manpower"
+              style={{ display: 'inline-flex', alignItems: 'center', gap: 8, padding: '14px 30px', background: 'var(--gold)', color: 'var(--slate)', fontFamily: "'Plus Jakarta Sans', sans-serif", fontWeight: 700, fontSize: 14, borderRadius: 10, textDecoration: 'none', transition: 'all 0.25s ease' }}
+              onMouseEnter={e => { e.currentTarget.style.background = 'var(--gold-light)'; e.currentTarget.style.transform = 'translateY(-2px)'; }}
+              onMouseLeave={e => { e.currentTarget.style.background = 'var(--gold)'; e.currentTarget.style.transform = 'translateY(0)'; }}
+            >
+              Get Manpower <svg width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+            </Link>
+            <Link to="/contact-info" id="hero-contact-us"
+              style={{ display: 'inline-flex', alignItems: 'center', gap: 8, padding: '12px 28px', background: 'transparent', color: 'rgba(255,255,255,0.85)', fontFamily: "'Plus Jakarta Sans', sans-serif", fontWeight: 600, fontSize: 14, borderRadius: 10, textDecoration: 'none', border: '1.5px solid rgba(255,255,255,0.25)', transition: 'all 0.25s ease' }}
+              onMouseEnter={e => { e.currentTarget.style.background = 'rgba(255,255,255,0.08)'; e.currentTarget.style.borderColor = 'rgba(255,255,255,0.5)'; }}
+              onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.borderColor = 'rgba(255,255,255,0.25)'; }}
+            >Contact Us</Link>
+          </div>
+
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 10, paddingTop: 20, borderTop: '1px solid rgba(255,255,255,0.1)' }}>
+            {[
+              `MEA License: ${LICENSE_NO}`,
+              `Government Reg No: ${RA_NO}`,
+              '100% Transparent & Compliant Recruitment Process'
+            ].map((b, i) => (
+              <div key={i} style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: 12.5, fontWeight: 500, color: 'rgba(255,255,255,0.65)', display: 'flex', alignItems: 'center', gap: 8 }}>
+                <span style={{ color: 'var(--gold)', fontSize: 14 }}>✓</span> {b}
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* RIGHT: Authentic Editorial Photo */}
+        <div style={{ position: 'relative', overflow: 'hidden', background: '#0f1a35', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 40 }} className="hero-right">
+          <div style={{ position: 'relative', width: '100%', height: '100%', maxHeight: 520, borderRadius: 16, overflow: 'hidden', border: '1.5px solid rgba(255,255,255,0.15)', boxShadow: '0 20px 50px rgba(0,0,0,0.3)' }}>
+            <img src="/images/modern_indian_skilled_trades.jpeg" alt="Professional Manpower Workforce" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+            <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to top, rgba(26,39,68,0.7) 0%, transparent 60%)' }} />
+            <div style={{ position: 'absolute', bottom: 24, left: 24, right: 24, color: '#fff' }}>
+              <div style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: 11, fontWeight: 700, letterSpacing: '0.15em', textTransform: 'uppercase', color: 'var(--gold)', marginBottom: 4 }}>Certified Technical Workforce</div>
+              <div style={{ fontFamily: "'Playfair Display', serif", fontSize: 20, fontWeight: 600 }}>Skilled trades ready for international deployment</div>
+            </div>
+          </div>
+        </div>
+
+        <style>{`
+          .hero-section { grid-template-columns: 12fr 10fr; min-height: 85vh; }
+          @media (max-width: 960px) {
+            .hero-section { grid-template-columns: 1fr !important; }
+            .hero-left { padding: 60px 32px 48px !important; }
+            .hero-right { padding: 0 32px 48px !important; min-height: 380px !important; }
+          }
+          @media (max-width: 640px) {
+            .hero-left { padding: 40px 20px 32px !important; }
+            .hero-right { padding: 0 20px 40px !important; min-height: 300px !important; }
+          }
+        `}</style>
+      </section>
+
+      {/* ═══════════════════════════════
+          TRUST INFORMATION STRIP
+      ═══════════════════════════════ */}
+      <div style={{ background: 'var(--cream)', borderBottom: '1.5px solid var(--fog)' }}>
+        <div style={{ maxWidth: 1200, margin: '0 auto', display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)' }} className="trust-grid">
+          {[
+            { value: ESTABLISHED_YEAR, label: 'Established', sub: 'Foundational Operations' },
+            { value: '10+ Years', label: 'Experience', sub: 'Overseas Manpower' },
+            { value: RA_NO, label: 'Registration', sub: 'Government Approved', mono: true },
+            { value: 'Buxar, Bihar', label: 'Head Office', sub: 'India Operations' },
+          ].map((s, i) => (
+            <div key={i} style={{ padding: '36px 32px', borderRight: i < 3 ? '1px solid var(--fog)' : 'none', display: 'flex', flexDirection: 'column', gap: 6 }} className={`scroll-reveal stagger-${i+1}`}>
+              <div style={{ fontFamily: s.mono ? "'JetBrains Mono', monospace" : "'Playfair Display', serif", fontSize: s.mono ? 16 : 36, fontWeight: 700, color: 'var(--slate)', lineHeight: 1.1 }}>
+                {s.value}
+              </div>
+              <div style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: 11.5, fontWeight: 700, color: 'var(--charcoal)', textTransform: 'uppercase', letterSpacing: '0.08em', marginTop: 4 }}>{s.label}</div>
+              <div style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: 12, color: 'var(--steel)' }}>{s.sub}</div>
+            </div>
+          ))}
+        </div>
+        <style>{`
+          .trust-grid { grid-template-columns: repeat(4, 1fr); }
+          @media (max-width: 900px) { .trust-grid { grid-template-columns: repeat(2, 1fr) !important; } }
+          @media (max-width: 480px) { .trust-grid { grid-template-columns: 1fr !important; } }
+        `}</style>
+      </div>
+
+      {/* ═══════════════════════════════
+          ABOUT SECTION — Asymmetric Layout
+      ═══════════════════════════════ */}
+      <section id="about" style={{ background: 'var(--ivory)', padding: '90px 60px' }} className="about-section">
+        <div style={{ maxWidth: 1200, margin: '0 auto', display: 'grid', gridTemplateColumns: '5fr 7fr', gap: 72, alignItems: 'center' }} className="about-grid">
+
+          <div style={{ position: 'relative' }} className="scroll-reveal-left">
+            <div style={{ borderRadius: 16, overflow: 'hidden', height: 480, border: '1.5px solid var(--fog)', boxShadow: '0 16px 40px rgba(13,17,23,0.1)' }}>
+              <img src="/images/corporate_desk_empty_team.jpeg" alt="RKR Globalpath Recruitment Team" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+            </div>
+          </div>
+
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }} className="scroll-reveal-right">
+            <div>
+              <div style={{ display: 'inline-flex', alignItems: 'center', gap: 8, padding: '5px 14px', borderRadius: 100, border: '1.5px solid rgba(201,168,76,0.35)', background: 'rgba(201,168,76,0.08)', fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: 11, fontWeight: 700, letterSpacing: '0.18em', textTransform: 'uppercase', color: 'var(--gold-dim)', marginBottom: 16 }}>
+                <span style={{ width: 5, height: 5, borderRadius: '50%', background: 'var(--gold)', display: 'inline-block' }} />
+                About RKR Globalpath
+              </div>
+              <h2 style={{ fontFamily: "'Playfair Display', serif", fontSize: 'clamp(28px, 3vw, 42px)', fontWeight: 700, color: 'var(--slate)', lineHeight: 1.25, letterSpacing: '-0.01em' }}>
+                A Legacy of Trust in International Manpower Deployment
+              </h2>
+            </div>
+
+            <p style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: 15, color: 'var(--steel)', lineHeight: 1.75 }}>
+              {COMPANY_NAME} is an authorized, MEA-licensed manpower recruitment firm based in Buxar, Bihar. We bridge the gap between skilled Indian talent and overseas corporate clients across the Gulf, Middle East, and global markets.
             </p>
-            
-            <div className="flex flex-row gap-2.5 sm:gap-4 justify-center mb-12">
-              <Link to="/apply" className="px-4 sm:px-7 py-3 sm:py-3.5 bg-gradient-to-r from-[#e11d48] to-[#be123c] hover:from-[#be123c] hover:to-[#9f1239] text-white text-xs sm:text-sm font-bold rounded-xl shadow-lg shadow-amber-500/20 hover:shadow-amber-500/30 transition-all duration-300 hover:-translate-y-0.5 inline-flex items-center justify-center gap-1.5 sm:gap-2">
-                <svg className="w-4 h-4 sm:w-5 sm:h-5" fill="currentColor" viewBox="0 0 20 20">
-                  <path d="M13 6a3 3 0 11-6 0 3 3 0 016 0zM18 8a2 2 0 11-4 0 2 2 0 014 0zM14 15a4 4 0 00-8 0v3h8v-3zM6 8a2 2 0 11-4 0 2 2 0 014 0z"/>
-                </svg>
-                Apply Now
+
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
+              {[
+                { label: 'MEA License No.', value: LICENSE_NO, mono: true },
+                { label: 'Registration No.', value: RA_NO, mono: true },
+                { label: 'Corporate ID (CIN)', value: 'U78300BIH2025PTC219970', mono: true },
+                { label: 'Headquarters', value: 'Buxar, Bihar - 802101', mono: false },
+              ].map((info, i) => (
+                <div key={i} style={{ background: 'var(--mist)', border: '1.5px solid var(--fog)', borderRadius: 10, padding: '12px 16px' }}>
+                  <div style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: 10, fontWeight: 700, color: 'var(--steel)', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 4 }}>{info.label}</div>
+                  <div style={{ fontFamily: info.mono ? "'JetBrains Mono', monospace" : "'Plus Jakarta Sans', sans-serif", fontSize: info.mono ? 10.5 : 13, fontWeight: 600, color: 'var(--slate)', wordBreak: 'break-all' }}>{info.value}</div>
+                </div>
+              ))}
+            </div>
+
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+              {[
+                'Strict background screening & trade qualifications testing',
+                'Full compliance with Ministry of External Affairs standards',
+                'Transparent employer-candidate agreement coordination',
+                'End-to-end visa, medical, and departure flight arrangements'
+              ].map((item, i) => (
+                <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                  <span style={{ color: 'var(--cobalt)', fontWeight: 700 }}>•</span>
+                  <span style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: 14, color: 'var(--charcoal)' }}>{item}</span>
+                </div>
+              ))}
+            </div>
+
+            <div style={{ display: 'flex', gap: 14, flexWrap: 'wrap', marginTop: 8 }}>
+              <Link to="/services" style={{ display: 'inline-flex', alignItems: 'center', gap: 8, padding: '12px 24px', background: 'var(--cobalt)', color: '#fff', fontFamily: "'Plus Jakarta Sans', sans-serif", fontWeight: 700, fontSize: 13.5, borderRadius: 10, textDecoration: 'none', transition: 'all 0.25s ease' }} onMouseEnter={e => { e.currentTarget.style.background = 'var(--cobalt-dark)'; }} onMouseLeave={e => { e.currentTarget.style.background = 'var(--cobalt)'; }}>
+                Explore Services <svg width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
               </Link>
-              <Link to="/why-us" className="px-4 sm:px-7 py-3 sm:py-3.5 bg-transparent hover:bg-white/5 border-2 border-white/20 text-white text-xs sm:text-sm font-bold rounded-xl transition-all duration-300 hover:-translate-y-0.5 inline-flex items-center justify-center gap-1.5 sm:gap-2">
-                <svg className="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M11.25 11.25l.041-.02a.75.75 0 111.063.852l-.708 2.836a.75.75 0 001.063.852l.041-.021M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
-                Why Us
-              </Link>
+              <Link to="/contact-info" style={{ display: 'inline-flex', alignItems: 'center', gap: 8, padding: '11px 22px', background: 'transparent', color: 'var(--slate)', fontFamily: "'Plus Jakarta Sans', sans-serif", fontWeight: 600, fontSize: 13.5, borderRadius: 10, textDecoration: 'none', border: '1.5px solid var(--slate)', transition: 'all 0.25s ease' }} onMouseEnter={e => { e.currentTarget.style.background = 'var(--slate)'; e.currentTarget.style.color = '#fff'; }} onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = 'var(--slate)'; }}>Contact Office</Link>
             </div>
+          </div>
+        </div>
+        <style>{`
+          .about-section { padding: 90px 60px; }
+          .about-grid { grid-template-columns: 5fr 7fr; gap: 72px; }
+          @media (max-width: 1024px) { .about-section { padding: 72px 32px !important; } .about-grid { grid-template-columns: 1fr !important; gap: 40px !important; } }
+          @media (max-width: 640px) { .about-section { padding: 56px 20px !important; } }
+        `}</style>
+      </section>
+
+      {/* ═══════════════════════════════
+          SERVICES — List Navigation Experience
+      ═══════════════════════════════ */}
+      <section id="services" style={{ background: 'var(--mist)', padding: '90px 60px' }} className="services-section">
+        <div style={{ maxWidth: 1200, margin: '0 auto' }}>
+          
+          <div style={{ marginBottom: 48 }} className="scroll-reveal">
+            <div style={{ display: 'inline-flex', alignItems: 'center', gap: 8, padding: '5px 14px', borderRadius: 100, border: '1.5px solid rgba(201,168,76,0.35)', background: 'rgba(201,168,76,0.08)', fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: 11, fontWeight: 700, letterSpacing: '0.18em', textTransform: 'uppercase', color: 'var(--gold-dim)', marginBottom: 16 }}>
+              <span style={{ width: 5, height: 5, borderRadius: '50%', background: 'var(--gold)', display: 'inline-block' }} />
+              Recruitment Solutions
+            </div>
+            <h2 style={{ fontFamily: "'Playfair Display', serif", fontSize: 'clamp(28px, 3vw, 44px)', fontWeight: 700, color: 'var(--slate)', lineHeight: 1.2 }}>
+              Structured Overseas Services
+            </h2>
+          </div>
+
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', background: 'var(--ivory)', borderRadius: 16, overflow: 'hidden', border: '1.5px solid var(--fog)', boxShadow: '0 8px 30px rgba(0,0,0,0.05)' }} className="services-grid scroll-scale">
             
-            {/* Trust Badges */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-16 max-w-4xl mx-auto">
-              <div className="flex items-center justify-center gap-3 bg-white/10 backdrop-blur-sm p-4 rounded-xl border border-white/10">
-                <svg className="w-6 h-6 text-amber-300 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                  <path fillRule="evenodd" d="M6.267 3.455a3.066 3.066 0 001.745-.723 3.066 3.066 0 013.976 0 3.066 3.066 0 001.745.723 3.066 3.066 0 012.812 3.062v6.218c0 1.695-.603 2.933-1.391 3.467.19.294.335.652.335 1.035 0 1.641-1.487 3-3.322 3H7.631c-1.835 0-3.322-1.359-3.322-3 0-.383.145-.74.335-1.035-.788-.534-1.391-1.772-1.391-3.467V6.518c0-1.691.977-3.149 2.414-3.063z" clipRule="evenodd"/>
-                </svg>
-                <span className="text-sm font-semibold">MEA Registered</span>
-              </div>
-              <div className="flex items-center justify-center gap-3 bg-white/10 backdrop-blur-sm p-4 rounded-xl border border-white/10">
-                <svg className="w-6 h-6 text-amber-300 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                  <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd"/>
-                </svg>
-                <span className="text-sm font-semibold">100% Legal</span>
-              </div>
-              <div className="flex items-center justify-center gap-3 bg-white/10 backdrop-blur-sm p-4 rounded-xl border border-white/10">
-                <svg className="w-6 h-6 text-amber-300 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                  <path d="M11 3a1 1 0 10-2 0v1a1 1 0 102 0V3zM15.657 5.757a1 1 0 00-1.414-1.414l-.707.707a1 1 0 001.414 1.414l.707-.707zM18 10a1 1 0 01-1 1h-1a1 1 0 110-2h1a1 1 0 011 1zM16.243 15.657a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414l.707.707zM10 16a1 1 0 01-1-1v-1a1 1 0 112 0v1a1 1 0 01-1 1zM5.757 15.657l-.707.707a1 1 0 001.414 1.414l.707-.707a1 1 0 00-1.414-1.414zM4 10a1 1 0 011-1h1a1 1 0 110 2H5a1 1 0 01-1-1zM5.757 4.343l.707-.707a1 1 0 00-1.414-1.414l-.707.707a1 1 0 001.414 1.414z"/>
-                </svg>
-                <span className="text-sm font-semibold">24/7 Support</span>
+            {/* Left: Interactive List */}
+            <div style={{ borderRight: '1.5px solid var(--fog)' }}>
+              {ALL_SERVICES.map((srv, i) => (
+                <div
+                  key={i}
+                  onMouseEnter={() => setActiveService(i)}
+                  onClick={() => setActiveService(i)}
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 16,
+                    padding: '18px 24px',
+                    cursor: 'pointer',
+                    borderBottom: i < ALL_SERVICES.length - 1 ? '1px solid var(--fog)' : 'none',
+                    borderLeft: `3px solid ${activeService === i ? 'var(--cobalt)' : 'transparent'}`,
+                    background: activeService === i ? 'rgba(29,78,216,0.04)' : 'transparent',
+                    transition: 'all 0.15s ease',
+                  }}
+                >
+                  <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 12, fontWeight: 600, color: activeService === i ? 'var(--cobalt)' : 'var(--pewter)', minWidth: 24 }}>{srv.num}</span>
+                  <span style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: 14, fontWeight: activeService === i ? 700 : 500, color: activeService === i ? 'var(--slate)' : 'var(--charcoal)', lineHeight: 1.3 }}>{srv.title}</span>
+                </div>
+              ))}
+            </div>
+
+            {/* Right: Clean Detail Panel */}
+            <div style={{ padding: '48px 40px', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+              <div key={activeService}>
+                <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 12, fontWeight: 700, color: 'var(--gold-dim)', letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: 12 }}>
+                  Service {ALL_SERVICES[activeService]?.num} / 10
+                </div>
+                <h3 style={{ fontFamily: "'Playfair Display', serif", fontSize: 26, fontWeight: 700, color: 'var(--slate)', lineHeight: 1.3, marginBottom: 16 }}>
+                  {ALL_SERVICES[activeService]?.title}
+                </h3>
+                <p style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: 15, color: 'var(--steel)', lineHeight: 1.75, marginBottom: 32 }}>
+                  {ALL_SERVICES[activeService]?.desc}
+                </p>
+                <Link to="/contact-info"
+                  style={{ display: 'inline-flex', alignItems: 'center', gap: 8, padding: '12px 24px', background: 'var(--cobalt)', color: '#fff', fontFamily: "'Plus Jakarta Sans', sans-serif", fontWeight: 700, fontSize: 13, borderRadius: 10, textDecoration: 'none', transition: 'all 0.25s ease' }}
+                  onMouseEnter={e => { e.currentTarget.style.background = 'var(--cobalt-dark)'; }}
+                  onMouseLeave={e => { e.currentTarget.style.background = 'var(--cobalt)'; }}
+                >
+                  Enquire About This Service <svg width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                </Link>
               </div>
             </div>
           </div>
         </div>
+        <style>{`
+          .services-section { padding: 90px 60px; }
+          .services-grid { grid-template-columns: 1fr 1fr; }
+          @media (max-width: 1024px) { .services-section { padding: 72px 32px !important; } }
+          @media (max-width: 768px) { .services-grid { grid-template-columns: 1fr !important; } }
+          @media (max-width: 640px) { .services-section { padding: 56px 20px !important; } }
+        `}</style>
       </section>
 
-      {/* Statistics Section */}
-      <section className="py-16 px-4 bg-gradient-to-r from-slate-50 to-blue-50 scroll-fade-in">
-        <div className="container mx-auto max-w-6xl">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            <div className="bg-white text-center p-6 rounded-2xl shadow-md border border-slate-100 hover:scale-[1.03] transition-all duration-300">
-              <div className="text-4xl font-bold text-amber-500 font-heading">1000+</div>
-              <div className="text-slate-600 font-semibold mt-2 text-sm">Placements Done</div>
+      {/* ═══════════════════════════════
+          MANPOWER CATEGORIES
+      ═══════════════════════════════ */}
+      <section id="manpower" style={{ background: 'var(--ivory)', padding: '90px 60px' }} className="manpower-section">
+        <div style={{ maxWidth: 1200, margin: '0 auto' }}>
+          <div style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', marginBottom: 40, flexWrap: 'wrap', gap: 24 }}>
+            <div className="scroll-reveal">
+              <div style={{ display: 'inline-flex', alignItems: 'center', gap: 8, padding: '5px 14px', borderRadius: 100, border: '1.5px solid rgba(201,168,76,0.35)', background: 'rgba(201,168,76,0.08)', fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: 11, fontWeight: 700, letterSpacing: '0.18em', textTransform: 'uppercase', color: 'var(--gold-dim)', marginBottom: 16 }}>
+                <span style={{ width: 5, height: 5, borderRadius: '50%', background: 'var(--gold)', display: 'inline-block' }} />
+                Workforce Classifications
+              </div>
+              <h2 style={{ fontFamily: "'Playfair Display', serif", fontSize: 'clamp(26px, 3vw, 42px)', fontWeight: 700, color: 'var(--slate)', lineHeight: 1.2 }}>
+                Trades & Skill Categories
+              </h2>
             </div>
-            <div className="bg-white text-center p-6 rounded-2xl shadow-md border border-slate-100 hover:scale-[1.03] transition-all duration-300">
-              <div className="text-4xl font-bold text-amber-500 font-heading">50+</div>
-              <div className="text-slate-600 font-semibold mt-2 text-sm">Countries Served</div>
-            </div>
-            <div className="bg-white text-center p-6 rounded-2xl shadow-md border border-slate-100 hover:scale-[1.03] transition-all duration-300">
-              <div className="text-4xl font-bold text-amber-500 font-heading">100%</div>
-              <div className="text-slate-600 font-semibold mt-2 text-sm">Success Rate</div>
-            </div>
-            <div className="bg-white text-center p-6 rounded-2xl shadow-md border border-slate-100 hover:scale-[1.03] transition-all duration-300">
-              <div className="text-4xl font-bold text-amber-500 font-heading">15+</div>
-              <div className="text-slate-600 font-semibold mt-2 text-sm">Years Experience</div>
+
+            {/* Tabs */}
+            <div style={{ display: 'flex', gap: 4, background: 'var(--mist)', borderRadius: 10, padding: 4, border: '1.5px solid var(--fog)' }} className="scroll-reveal">
+              {manpowerTabs.map((tab) => (
+                <button key={tab.key} onClick={() => setActiveManpowerTab(tab.key)}
+                  style={{
+                    fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: 13, fontWeight: 700,
+                    padding: '9px 18px', borderRadius: 8, border: 'none', cursor: 'pointer',
+                    background: activeManpowerTab === tab.key ? 'var(--slate)' : 'transparent',
+                    color: activeManpowerTab === tab.key ? '#fff' : 'var(--steel)',
+                    transition: 'all 0.15s ease', whiteSpace: 'nowrap',
+                  }}
+                >
+                  {tab.label} ({tab.count})
+                </button>
+              ))}
             </div>
           </div>
+
+          {/* Grid of trades without emojis */}
+          <div key={activeManpowerTab} style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 12 }} className="manpower-grid">
+            {MANPOWER_DATA[activeManpowerTab].map((trade, i) => (
+              <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '14px 18px', background: 'var(--mist)', border: '1.5px solid var(--fog)', borderRadius: 10 }}>
+                <span style={{ width: 6, height: 6, borderRadius: '50%', background: 'var(--cobalt)', flexShrink: 0 }} />
+                <span style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: 13.5, fontWeight: 600, color: 'var(--slate)' }}>{trade}</span>
+              </div>
+            ))}
+          </div>
         </div>
+        <style>{`
+          .manpower-section { padding: 90px 60px; }
+          .manpower-grid { grid-template-columns: repeat(4, 1fr); }
+          @media (max-width: 1024px) { .manpower-section { padding: 72px 32px !important; } .manpower-grid { grid-template-columns: repeat(3, 1fr) !important; } }
+          @media (max-width: 768px) { .manpower-grid { grid-template-columns: repeat(2, 1fr) !important; } }
+          @media (max-width: 480px) { .manpower-grid { grid-template-columns: 1fr !important; } }
+        `}</style>
       </section>
 
-      {/* Services Overview */}
-      <section className="py-20 px-4 scroll-fade-in">
-        <div className="container mx-auto max-w-6xl">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl font-bold text-blue-900 mb-4 font-heading">Our Services</h2>
-            <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-              We provide comprehensive overseas recruitment solutions tailored to your needs
+      {/* ═══════════════════════════════
+          RECRUITMENT PROCESS — Timeline
+      ═══════════════════════════════ */}
+      <section id="process" style={{ background: 'var(--slate)', color: '#fff', padding: '90px 60px' }} className="process-section">
+        <div style={{ maxWidth: 1200, margin: '0 auto' }}>
+          
+          <div style={{ textAlign: 'center', marginBottom: 56 }} className="scroll-reveal">
+            <div style={{ display: 'inline-flex', alignItems: 'center', gap: 8, padding: '5px 14px', borderRadius: 100, border: '1.5px solid rgba(201,168,76,0.3)', background: 'rgba(201,168,76,0.08)', fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: 11, fontWeight: 700, letterSpacing: '0.18em', textTransform: 'uppercase', color: 'var(--gold)', marginBottom: 16 }}>
+              Structured Workflow
+            </div>
+            <h2 style={{ fontFamily: "'Playfair Display', serif", fontSize: 'clamp(28px, 3vw, 44px)', fontWeight: 700, color: '#fff', lineHeight: 1.2 }}>
+              The Recruitment Journey
+            </h2>
+            <p style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: 15, color: 'rgba(255,255,255,0.6)', maxWidth: 500, margin: '12px auto 0' }}>
+              Eight transparent, compliant milestones from demand receipt to candidate flight deployment.
             </p>
           </div>
-          
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {/* Service 1 */}
-            <div 
-              className="scroll-scale-in bg-white rounded-2xl p-6 shadow-md border border-slate-100 hover:shadow-lg hover:-translate-y-1.5 transition-all duration-305"
-            >
-              <div className="w-16 h-16 bg-gradient-to-br from-[#e11d48] to-[#be123c] rounded-2xl flex items-center justify-center text-white text-3xl mb-6 shadow-sm">
-                <svg className="w-8 h-8" fill="currentColor" viewBox="0 0 20 20">
-                  <path d="M13 6a3 3 0 11-6 0 3 3 0 016 0zM18 8a2 2 0 11-4 0 2 2 0 014 0zM14 15a4 4 0 00-8 0v3h8v-3zM6 8a2 2 0 11-4 0 2 2 0 014 0z"/>
-                </svg>
+
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 24 }} className="process-grid">
+            {JOURNEY_STEPS.map((step, i) => (
+              <div key={i} style={{ background: 'rgba(255,255,255,0.04)', border: '1.5px solid rgba(255,255,255,0.08)', borderRadius: 14, padding: 24, display: 'flex', flexDirection: 'column', gap: 12 }} className={`scroll-reveal stagger-${(i%4)+1}`}>
+                <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 14, fontWeight: 700, color: 'var(--gold)', letterSpacing: '0.1em' }}>
+                  STEP {step.num}
+                </div>
+                <h3 style={{ fontFamily: "'Playfair Display', serif", fontSize: 18, fontWeight: 700, color: '#fff' }}>
+                  {step.title}
+                </h3>
+                <p style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: 13, color: 'rgba(255,255,255,0.6)', lineHeight: 1.6 }}>
+                  {step.desc}
+                </p>
               </div>
-              <h3 className="text-xl font-bold text-blue-900 mb-2 font-heading">Skilled Workers</h3>
-              <p className="text-slate-600 leading-relaxed text-sm">Connect with highly trained professionals in IT, engineering, construction, and trade skills.</p>
-            </div>
-            
-            {/* Service 2 */}
-            <div 
-              className="scroll-scale-in bg-white rounded-2xl p-6 shadow-md border border-slate-100 hover:shadow-lg hover:-translate-y-1.5 transition-all duration-305"
-            >
-              <div className="w-16 h-16 bg-gradient-to-br from-[#e11d48] to-[#be123c] rounded-2xl flex items-center justify-center text-white text-3xl mb-6 shadow-sm">
-                <svg className="w-8 h-8" fill="currentColor" viewBox="0 0 20 20">
-                  <path d="M10.894 2.553a1 1 0 00-1.788 0l-7 14a1 1 0 001.169 1.409l5.951-1.429 5.951 1.429a1 1 0 001.169-1.409l-7-14z"/>
-                </svg>
-              </div>
-              <h3 className="text-xl font-bold text-blue-900 mb-2 font-heading">Healthcare Professionals</h3>
-              <p className="text-slate-600 leading-relaxed text-sm">Registered nurses, doctors, and healthcare staff for hospitals and care facilities worldwide.</p>
-            </div>
-            
-            {/* Service 3 */}
-            <div 
-              className="scroll-scale-in bg-white rounded-2xl p-6 shadow-md border border-slate-100 hover:shadow-lg hover:-translate-y-1.5 transition-all duration-305"
-            >
-              <div className="w-16 h-16 bg-gradient-to-br from-[#e11d48] to-[#be123c] rounded-2xl flex items-center justify-center text-white text-3xl mb-6 shadow-sm">
-                <svg className="w-8 h-8" fill="currentColor" viewBox="0 0 20 20">
-                  <path fillRule="evenodd" d="M6.625 2.655A9 9 0 0119 11a9 9 0 11-9.655-8.345 1.40625 1.40625 0 11-.75 1.977A7.002 7.002 0 0117 11a7 7 0 11-8.235-6.89 1.406 1.406 0 11.79-1.465A9.001 9.001 0 006.625 2.655z" clipRule="evenodd"/>
-                </svg>
-              </div>
-              <h3 className="text-xl font-bold text-blue-900 mb-2 font-heading">IT & BPO Professionals</h3>
-              <p className="text-slate-600 leading-relaxed text-sm">Top-tier software engineers, developers, and business process specialists for global tech companies.</p>
-            </div>
-          </div>
-          
-          <div className="text-center mt-12">
-            <Link to="/services" className="px-7 py-3.5 bg-gradient-to-r from-[#e11d48] to-[#be123c] hover:from-[#be123c] hover:to-[#9f1239] text-white text-sm font-bold rounded-xl shadow-lg shadow-amber-500/20 transition-all inline-block">
-              View All Services
-            </Link>
+            ))}
           </div>
         </div>
+        <style>{`
+          .process-section { padding: 90px 60px; }
+          .process-grid { grid-template-columns: repeat(4, 1fr); }
+          @media (max-width: 1024px) { .process-section { padding: 72px 32px !important; } .process-grid { grid-template-columns: repeat(2, 1fr) !important; } }
+          @media (max-width: 640px) { .process-section { padding: 56px 20px !important; } .process-grid { grid-template-columns: 1fr !important; } }
+        `}</style>
       </section>
 
-      {/* About Us Section */}
-      <section className="py-24 px-4 bg-gradient-to-r from-blue-50 to-slate-50 scroll-fade-in" id="about">
-        <div className="container mx-auto max-w-6xl">
-          <div className="text-center mb-14">
-            <span className="inline-block px-4 py-1.5 bg-amber-100 text-amber-700 text-sm font-semibold rounded-full mb-4">Who We Are</span>
-            <h2 className="text-4xl md:text-5xl font-bold text-blue-900 mb-4 font-heading">About New Adarsh</h2>
-            <p className="text-lg text-gray-600 max-w-2xl mx-auto">Your trusted global recruitment partner since 2008</p>
+      {/* ═══════════════════════════════
+          DESTINATIONS
+      ═══════════════════════════════ */}
+      <section id="destinations" style={{ background: 'var(--ivory)', padding: '90px 60px' }} className="dest-section">
+        <div style={{ maxWidth: 1200, margin: '0 auto' }}>
+          
+          <div style={{ marginBottom: 40 }} className="scroll-reveal">
+            <div style={{ display: 'inline-flex', alignItems: 'center', gap: 8, padding: '5px 14px', borderRadius: 100, border: '1.5px solid rgba(201,168,76,0.35)', background: 'rgba(201,168,76,0.08)', fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: 11, fontWeight: 700, letterSpacing: '0.18em', textTransform: 'uppercase', color: 'var(--gold-dim)', marginBottom: 16 }}>
+              International Operations
+            </div>
+            <h2 style={{ fontFamily: "'Playfair Display', serif", fontSize: 'clamp(28px, 3vw, 42px)', fontWeight: 700, color: 'var(--slate)' }}>
+              Primary Overseas Markets
+            </h2>
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-start">
-            {/* Left: Owner Image Card */}
-            <div className="lg:col-span-5 scroll-fade-in-left">
-              <div className="bg-white rounded-2xl shadow-xl overflow-hidden border border-gray-100 hover:shadow-2xl transition-shadow duration-500">
-                <div className="relative overflow-hidden h-72 sm:h-80">
-                  <img src="/images/corporate_desk_empty_team.jpeg" alt="Founder - New Adarsh" className="w-full h-full object-cover" />
-                  <div className="absolute bottom-0 left-0 right-0 h-1.5 bg-gradient-to-r from-amber-400 via-amber-500 to-amber-600"></div>
-                </div>
-                <div className="p-6">
-                  <h3 className="text-2xl font-bold text-blue-900 mb-1 font-heading">Ram Pramod Patel</h3>
-                  <p className="text-amber-600 font-semibold mb-3">Founder & Director</p>
-                  <p className="text-slate-600 text-sm leading-relaxed">With 15+ years of experience in overseas recruitment, leading New Adarsh with a commitment to ethical practices and transparent operations.</p>
-                  <div className="mt-4 pt-4 border-t border-gray-100 flex items-center gap-3">
-                    <div className="w-8 h-8 rounded-full bg-amber-100 flex items-center justify-center">
-                      <svg className="w-4 h-4 text-amber-600" fill="currentColor" viewBox="0 0 20 20"><path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z"/><path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z"/></svg>
-                    </div>
-                    <span className="text-sm text-slate-600">{CONTACT_INFO.email}</span>
-                  </div>
-                </div>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 16 }} className="dest-grid">
+            {DESTINATIONS.map((d, i) => (
+              <div key={i} style={{ background: 'var(--mist)', border: '1.5px solid var(--fog)', borderRadius: 12, padding: '20px 24px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                <span style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: 15, fontWeight: 700, color: 'var(--slate)' }}>{d.name}</span>
+                <span style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: 11, fontWeight: 600, color: 'var(--steel)', textTransform: 'uppercase', letterSpacing: '0.08em' }}>{d.region}</span>
               </div>
-            </div>
+            ))}
+          </div>
+        </div>
+        <style>{`
+          .dest-section { padding: 90px 60px; }
+          .dest-grid { grid-template-columns: repeat(3, 1fr); }
+          @media (max-width: 900px) { .dest-grid { grid-template-columns: repeat(2, 1fr) !important; } }
+          @media (max-width: 640px) { .dest-section { padding: 56px 20px !important; } .dest-grid { grid-template-columns: 1fr !important; } }
+        `}</style>
+      </section>
 
-            {/* Right: About Content + Stats */}
-            <div className="lg:col-span-7 scroll-fade-in-right">
-              <h3 className="text-3xl font-bold text-blue-900 mb-5 font-heading">Your Trusted Global Recruitment Partner</h3>
-              <p className="text-slate-700 text-lg mb-4 leading-relaxed">
-                {COMPANY_NAME} is an MEA-approved, Government of India licensed overseas manpower recruitment agency headquartered in Deoria Sadar, Uttar Pradesh. With over 15 years of experience, we specialize in connecting skilled Indian professionals with trusted international employers.
+      {/* ═══════════════════════════════
+          WHY CHOOSE US & STRENGTHS
+      ═══════════════════════════════ */}
+      <section id="strengths" style={{ background: 'var(--cream)', padding: '90px 60px' }} className="strengths-section">
+        <div style={{ maxWidth: 1200, margin: '0 auto' }}>
+          
+          <div style={{ display: 'grid', gridTemplateColumns: '5fr 7fr', gap: 64 }} className="strengths-grid">
+            
+            <div className="scroll-reveal-left">
+              <div style={{ display: 'inline-flex', alignItems: 'center', gap: 8, padding: '5px 14px', borderRadius: 100, border: '1.5px solid rgba(201,168,76,0.35)', background: 'rgba(201,168,76,0.08)', fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: 11, fontWeight: 700, letterSpacing: '0.18em', textTransform: 'uppercase', color: 'var(--gold-dim)', marginBottom: 16 }}>
+                Core Capabilities
+              </div>
+              <h2 style={{ fontFamily: "'Playfair Display', serif", fontSize: 'clamp(28px, 3vw, 42px)', fontWeight: 700, color: 'var(--slate)', lineHeight: 1.25, marginBottom: 16 }}>
+                Why Leading Employers Choose RKR Globalpath
+              </h2>
+              <p style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: 15, color: 'var(--steel)', lineHeight: 1.7 }}>
+                Our 12 core operational standards guarantee precision, candidate authenticity, and legal compliance across all international manpower deployments.
               </p>
-              <p className="text-slate-700 text-lg mb-8 leading-relaxed">
-                Our mission is to facilitate seamless, legal, and transparent overseas recruitment. We maintain the highest standards of compliance with MEA regulations across Gulf, Middle East, Europe, and Asia.
-              </p>
-              
-              {/* Stats Grid */}
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-8">
-                <div className="bg-white rounded-xl p-4 text-center shadow-sm border border-gray-100">
-                  <div className="text-2xl sm:text-3xl font-bold text-amber-600 font-heading">1000+</div>
-                  <p className="text-slate-600 text-xs sm:text-sm mt-1 font-medium">Placements</p>
-                </div>
-                <div className="bg-white rounded-xl p-4 text-center shadow-sm border border-gray-100">
-                  <div className="text-2xl sm:text-3xl font-bold text-amber-600 font-heading">50+</div>
-                  <p className="text-slate-600 text-xs sm:text-sm mt-1 font-medium">Countries</p>
-                </div>
-                <div className="bg-white rounded-xl p-4 text-center shadow-sm border border-gray-100">
-                  <div className="text-2xl sm:text-3xl font-bold text-amber-600 font-heading">100%</div>
-                  <p className="text-slate-600 text-xs sm:text-sm mt-1 font-medium">Legal</p>
-                </div>
-                <div className="bg-white rounded-xl p-4 text-center shadow-sm border border-gray-100">
-                  <div className="text-2xl sm:text-3xl font-bold text-amber-600 font-heading">15+</div>
-                  <p className="text-slate-600 text-xs sm:text-sm mt-1 font-medium">Years</p>
-                </div>
-              </div>
+            </div>
 
-              {/* Key Feature Cards */}
-              <div className="space-y-4">
-                <div className="bg-white p-5 rounded-xl border-l-4 border-amber-400 shadow-sm hover:shadow-md transition-all duration-300">
-                  <h4 className="text-base font-bold text-blue-900 mb-1 flex items-center gap-2 font-heading">
-                    <svg className="w-5 h-5 text-amber-600" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M6.267 3.455a3.066 3.066 0 001.745-.723 3.066 3.066 0 013.976 0 3.066 3.066 0 001.745.723 3.066 3.066 0 012.812 3.062v6.218c0 1.695-.603 2.933-1.391 3.467.19.294.335.652.335 1.035 0 1.641-1.487 3-3.322 3H7.631c-1.835 0-3.322-1.359-3.322-3 0-.383.145-.74.335-1.035-.788-.534-1.391-1.772-1.391-3.467V6.518c0-1.691.977-3.149 2.414-3.063z" clipRule="evenodd"/></svg>
-                    MEA Registered & Government Approved
-                  </h4>
-                  <p className="text-slate-600 text-sm">Fully compliant with Ministry of External Affairs regulations and Government of India licensing.</p>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 0, background: 'var(--ivory)', borderRadius: 14, border: '1.5px solid var(--fog)', overflow: 'hidden' }} className="strengths-inner-grid scroll-reveal-right">
+              {STRENGTHS.map((strength, i) => (
+                <div key={i}
+                  onMouseEnter={() => setHoveredStrength(i)}
+                  onMouseLeave={() => setHoveredStrength(null)}
+                  style={{
+                    display: 'flex', alignItems: 'center', gap: 14,
+                    padding: '16px 20px',
+                    borderBottom: '1px solid var(--fog)',
+                    borderRight: i % 2 === 0 ? '1px solid var(--fog)' : 'none',
+                    borderLeft: hoveredStrength === i ? '3px solid var(--gold)' : '3px solid transparent',
+                    background: hoveredStrength === i ? 'rgba(201,168,76,0.04)' : 'transparent',
+                    transition: 'all 0.15s ease',
+                  }}
+                >
+                  <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 11, fontWeight: 700, color: hoveredStrength === i ? 'var(--gold-dim)' : 'var(--pewter)' }}>
+                    {String(i + 1).padStart(2, '0')}
+                  </span>
+                  <span style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: 13, fontWeight: hoveredStrength === i ? 700 : 500, color: hoveredStrength === i ? 'var(--slate)' : 'var(--charcoal)', lineHeight: 1.35 }}>
+                    {strength}
+                  </span>
                 </div>
-              </div>
+              ))}
             </div>
           </div>
         </div>
+        <style>{`
+          .strengths-section { padding: 90px 60px; }
+          .strengths-grid { grid-template-columns: 5fr 7fr; gap: 64px; }
+          .strengths-inner-grid { grid-template-columns: 1fr 1fr; }
+          @media (max-width: 1024px) { .strengths-section { padding: 72px 32px !important; } .strengths-grid { grid-template-columns: 1fr !important; gap: 40px !important; } }
+          @media (max-width: 640px) { .strengths-section { padding: 56px 20px !important; } .strengths-inner-grid { grid-template-columns: 1fr !important; } }
+        `}</style>
       </section>
 
-      {/* Government Certificates Section */}
-      <section className="py-20 bg-white scroll-fade-in" id="certificates">
-        <div className="container mx-auto max-w-6xl px-4">
-          <div className="text-center mb-12">
-            <span className="inline-block px-4 py-1.5 bg-blue-100 text-blue-700 text-sm font-semibold rounded-full mb-4">Official Recognition</span>
-            <h2 className="text-4xl md:text-5xl font-bold text-blue-900 mb-4 font-heading">Our Government Certifications</h2>
-            <p className="text-lg text-gray-600 max-w-2xl mx-auto">Click any certificate to view full size</p>
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
-            {/* Certificate 1 */}
-            <div className="scroll-scale-in">
-              <div 
-                className="group bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-500 overflow-hidden border border-gray-100 hover:border-amber-200 cursor-pointer" 
-                onClick={() => openCertModal('/images/certificate.PNG', 'Certificate of Incorporation')}
-              >
-                <div className="relative overflow-hidden bg-gradient-to-br from-amber-50 to-orange-50 p-4 sm:p-6">
-                  <div className="absolute top-3 right-3 z-10 w-9 h-9 bg-gradient-to-br from-amber-400 to-amber-600 rounded-full flex items-center justify-center text-white shadow-lg transform group-hover:scale-110 transition-transform duration-300">
-                    <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd"/></svg>
-                  </div>
-                  <img src="/images/certificate.PNG" alt="Certificate of Incorporation" className="w-full h-44 sm:h-52 md:h-60 object-contain rounded-lg transform group-hover:scale-105 transition-transform duration-500" loading="lazy" />
-                  <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-all duration-300 flex items-center justify-center">
-                    <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-white/90 backdrop-blur-sm rounded-full p-2.5 shadow-lg">
-                      <svg className="w-5 h-5 text-blue-900" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7"/></svg>
-                    </div>
-                  </div>
-                </div>
-                <div className="p-4 sm:p-5 text-center">
-                  <h3 className="text-base font-bold text-blue-900 font-heading">Ministry of Corporate Affairs</h3>
-            
-                </div>
-              </div>
-            </div>
-
-            {/* Certificate 2 */}
-            <div className="scroll-scale-in">
-              <div 
-                className="group bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-500 overflow-hidden border border-gray-100 hover:border-blue-200 cursor-pointer" 
-                onClick={() => openCertModal('/images/license_certificate.PNG', 'Registration Certificate')}
-              >
-                <div className="relative overflow-hidden bg-gradient-to-br from-blue-50 to-indigo-50 p-4 sm:p-6">
-                  <div className="absolute top-3 right-3 z-10 w-9 h-9 bg-gradient-to-br from-blue-400 to-blue-600 rounded-full flex items-center justify-center text-white shadow-lg transform group-hover:scale-110 transition-transform duration-300">
-                    <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd"/></svg>
-                  </div>
-                  <img src="/images/license_certificate.PNG" alt="Registration Certificate" className="w-full h-44 sm:h-52 md:h-60 object-contain rounded-lg transform group-hover:scale-105 transition-transform duration-500" loading="lazy" />
-                  <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-all duration-300 flex items-center justify-center">
-                    <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-white/90 backdrop-blur-sm rounded-full p-2.5 shadow-lg">
-                      <svg className="w-5 h-5 text-blue-900" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7"/></svg>
-                    </div>
-                  </div>
-                </div>
-                <div className="p-4 sm:p-5 text-center">
-                  <h3 className="text-base font-bold text-blue-900 font-heading">Ministry of External Affairs</h3>
-                  {/* <p className="text-xs text-blue-600 font-semibold">State Govt. Approved</p> */}
-                </div>
-              </div>
-            </div>
-
-            {/* Certificate 3 */}
-            {/*<div className="scroll-scale-in">
-              <div className="group bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-500 overflow-hidden border border-gray-100 hover:border-green-200">
-                <div className="relative overflow-hidden bg-gradient-to-br from-green-50 to-emerald-50 p-4 sm:p-6">
-                  <img src="/images/mea_logo.png" alt="MEA Official Emblem" className="w-full h-44 sm:h-52 md:h-60 object-contain rounded-lg" loading="lazy" />
-                </div>
-                <div className="p-4 sm:p-5 text-center">
-                  <h3 className="text-base font-bold text-blue-900 font-heading">MEA Recognized</h3>
-                  <p className="text-xs text-green-600 font-semibold">Official Govt. Emblem</p>
-                </div>
-              </div>
-            </div>*/}
-
-            {/* Certificate 3 */}
-            <div className="scroll-scale-in">
-              <div 
-                className="group bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-500 overflow-hidden border border-gray-100 hover:border-purple-200 cursor-pointer" 
-                onClick={() => openCertModal('/images/updated_shop_and_establishment.pdf', 'Shop & Establishment Certificate')}
-              >
-                <div className="relative overflow-hidden bg-gradient-to-br from-purple-50 to-fuchsia-50 p-4 sm:p-6">
-                  <div className="absolute top-3 right-3 z-10 w-9 h-9 bg-gradient-to-br from-purple-400 to-purple-600 rounded-full flex items-center justify-center text-white shadow-lg transform group-hover:scale-110 transition-transform duration-300">
-                    <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd"/></svg>
-                  </div>
-                  <div className="w-full h-44 sm:h-52 md:h-60 overflow-hidden rounded-lg border border-dashed border-purple-200 bg-purple-50 relative">
-                    <div className={`absolute inset-0 flex flex-col items-center justify-center gap-3 bg-white/90 text-purple-700 transition-opacity duration-300 ${shopPreviewLoading ? 'opacity-100' : 'pointer-events-none opacity-0'}`}>
-                      <div className="h-10 w-10 rounded-full border-4 border-purple-300 border-t-transparent animate-spin" />
-                      <span className="text-sm font-semibold">Loading preview...</span>
-                    </div>
-                    <iframe
-                      src="/images/updated_shop_and_establishment.pdf#view=fitH&toolbar=0"
-                      title="Shop & Establishment Certificate Preview"
-                      className="w-full h-full"
-                      onLoad={() => setShopPreviewLoading(false)}
-                    />
-                  </div>
-                  <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-all duration-300 flex items-center justify-center">
-                    <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-white/90 backdrop-blur-sm rounded-full p-2.5 shadow-lg">
-                      <svg className="w-5 h-5 text-blue-900" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7"/></svg>
-                    </div>
-                  </div>
-                </div>
-                <div className="p-4 sm:p-5 text-center">
-                  <h3 className="text-base font-bold text-blue-900 font-heading">Shop & Establishment</h3>
-                   {/*<p className="text-xs text-purple-600 font-semibold">Updated PDF Certificate</p> */}
-                </div>
-              </div>
-            </div>
-
-            {/* Certificate 5 */}
-            <div className="scroll-scale-in">
-              <div 
-                className="group bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-500 overflow-hidden border border-gray-100 hover:border-cyan-200 cursor-pointer" 
-                onClick={() => openCertModal('/images/udyam_registration_certificate.pdf', 'Udyam Registration Certificate')}
-              >
-                <div className="relative overflow-hidden bg-gradient-to-br from-cyan-50 to-sky-50 p-4 sm:p-6">
-                  <div className="absolute top-3 right-3 z-10 w-9 h-9 bg-gradient-to-br from-cyan-400 to-sky-600 rounded-full flex items-center justify-center text-white shadow-lg transform group-hover:scale-110 transition-transform duration-300">
-                    <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd"/></svg>
-                  </div>
-                  <div className="w-full h-44 sm:h-52 md:h-60 overflow-hidden rounded-lg border border-dashed border-cyan-200 bg-cyan-50 relative">
-                    <iframe
-                      src="/images/udyam_registration_certificate.pdf#view=fitH&toolbar=0"
-                      title="Udyam Registration Certificate"
-                      className="w-full h-full"
-                    />
-                  </div>
-                  <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-all duration-300 flex items-center justify-center">
-                    <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-white/90 backdrop-blur-sm rounded-full p-2.5 shadow-lg">
-                      <svg className="w-5 h-5 text-blue-900" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7"/></svg>
-                    </div>
-                  </div>
-                </div>
-                <div className="p-4 sm:p-5 text-center">
-                  <h3 className="text-base font-bold text-blue-900 font-heading">Udyam Registration</h3>
-                  <p className="text-xs text-cyan-600 font-semibold">Government MSME Certificate</p>
-                </div>
-              </div>
-            </div>
-
-            {/* Certificate 6 */}
-            <div className="scroll-scale-in">
-              <div 
-                className="group bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-500 overflow-hidden border border-gray-100 hover:border-amber-200 cursor-pointer" 
-                onClick={() => openCertModal('/images/gst_certificate.pdf', 'GST Certificate')}
-              >
-                <div className="relative overflow-hidden bg-gradient-to-br from-amber-50 to-orange-50 p-4 sm:p-6">
-                  <div className="absolute top-3 right-3 z-10 w-9 h-9 bg-gradient-to-br from-amber-400 to-orange-600 rounded-full flex items-center justify-center text-white shadow-lg transform group-hover:scale-110 transition-transform duration-300">
-                    <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd"/></svg>
-                  </div>
-                  <div className="w-full h-44 sm:h-52 md:h-60 overflow-hidden rounded-lg border border-dashed border-amber-200 bg-amber-50 relative">
-                    <iframe
-                      src="/images/gst_certificate.pdf#view=fitH&toolbar=0"
-                      title="GST Certificate"
-                      className="w-full h-full"
-                    />
-                  </div>
-                  <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-all duration-300 flex items-center justify-center">
-                    <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-white/90 backdrop-blur-sm rounded-full p-2.5 shadow-lg">
-                      <svg className="w-5 h-5 text-blue-900" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7"/></svg>
-                    </div>
-                  </div>
-                </div>
-                <div className="p-4 sm:p-5 text-center">
-                  <h3 className="text-base font-bold text-blue-900 font-heading">GST Certificate</h3>
-                  <p className="text-xs text-amber-600 font-semibold">Goods & Services Tax</p>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div className="text-center mt-10">
-            <Link to="/about" className="px-7 py-3.5 bg-gradient-to-r from-[#e11d48] to-[#be123c] hover:from-[#be123c] hover:to-[#9f1239] text-white text-sm font-bold rounded-xl shadow-lg shadow-amber-500/20 transition-all inline-flex items-center gap-2">
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138c.11.73.39 1.4.806 1.946a3.42 3.42 0 010 4.438c-.416.547-.696 1.215-.806 1.946a3.42 3.42 0 01-3.138 3.138c-.73.11-1.4.39-1.946.806a3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438c.416-.547.696-1.215.806-1.946a3.42 3.42 0 013.138-3.138z"/></svg>
-              View All Certifications
-            </Link>
-          </div>
-        </div>
-      </section>
-
-      {/* Why Choose Us */}
-      <section className="py-20 px-4 bg-gradient-to-r from-brandBlue to-blue-900 text-white scroll-fade-in">
-        <div className="container mx-auto max-w-6xl">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl font-bold text-white mb-4 font-heading">Why Choose Us</h2>
-            <p className="text-xl text-blue-100 max-w-2xl mx-auto">
-              Industry-leading recruitment with unmatched expertise and success rate
-            </p>
-          </div>
+      {/* ═══════════════════════════════
+          LEGAL & CERTIFICATIONS
+      ═══════════════════════════════ */}
+      <section id="certificates" style={{ background: 'var(--ivory)', padding: '90px 60px' }} className="cert-section">
+        <div style={{ maxWidth: 1200, margin: '0 auto' }}>
           
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
-            <div className="flex gap-4">
-              <div className="w-12 h-12 rounded-xl bg-amber-300/20 flex items-center justify-center flex-shrink-0">
-                <svg className="w-6 h-6 text-amber-300" fill="currentColor" viewBox="0 0 20 20">
-                  <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd"/>
-                </svg>
-              </div>
-              <div>
-                <h4 className="text-lg font-bold text-white mb-2 font-heading">Government Approved</h4>
-                <p className="text-blue-100 text-sm leading-relaxed">Fully registered with MEA and compliant with all government regulations and standards.</p>
-              </div>
+          <div style={{ textAlign: 'center', marginBottom: 48 }} className="scroll-reveal">
+            <div style={{ display: 'inline-flex', alignItems: 'center', gap: 8, padding: '5px 14px', borderRadius: 100, border: '1.5px solid rgba(201,168,76,0.35)', background: 'rgba(201,168,76,0.08)', fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: 11, fontWeight: 700, letterSpacing: '0.18em', textTransform: 'uppercase', color: 'var(--gold-dim)', marginBottom: 16 }}>
+              Compliance & Verification
             </div>
-            
-            <div className="flex gap-4">
-              <div className="w-12 h-12 rounded-xl bg-amber-300/20 flex items-center justify-center flex-shrink-0">
-                <svg className="w-6 h-6 text-amber-300" fill="currentColor" viewBox="0 0 20 20">
-                  <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
-                </svg>
+            <h2 style={{ fontFamily: "'Playfair Display', serif", fontSize: 'clamp(26px, 3vw, 42px)', fontWeight: 700, color: 'var(--slate)', marginBottom: 10 }}>
+              Government Licenses & Registrations
+            </h2>
+            <p style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: 14.5, color: 'var(--steel)' }}>
+              Verified documentation for legal overseas recruitment operations.
+            </p>
+          </div>
+
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 24 }} className="cert-grid">
+            {[
+              { src: '/images/certificate.PNG', title: 'Ministry of Corporate Affairs', label: 'Certificate of Incorporation', accent: 'var(--gold)' },
+              { src: '/images/license_certificate.PNG', title: 'Ministry of External Affairs', label: 'MEA License Certificate', accent: 'var(--cobalt)' },
+              { src: '/images/gst_certificate.pdf', title: 'GST Registration', label: 'Goods & Services Tax', accent: 'var(--slate)' },
+            ].map((cert, i) => (
+              <div key={i} onClick={() => openCertModal(cert.src, cert.label)}
+                style={{ cursor: 'pointer', background: 'var(--ivory)', border: '1.5px solid var(--fog)', borderRadius: 14, overflow: 'hidden', transition: 'all 0.25s ease' }}
+                className={`scroll-scale stagger-${i+1}`}
+                onMouseEnter={e => { e.currentTarget.style.borderColor = cert.accent; }}
+                onMouseLeave={e => { e.currentTarget.style.borderColor = 'var(--fog)'; }}
+              >
+                <div style={{ height: 3, background: cert.accent }} />
+                <div style={{ padding: 24, background: 'var(--mist)', height: 180, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  {cert.src.endsWith('.pdf') ? (
+                    <div style={{ textAlign: 'center', color: 'var(--steel)' }}>
+                      <svg width="36" height="36" fill="none" stroke="currentColor" strokeWidth="1.5" viewBox="0 0 24 24" style={{ opacity: 0.5, marginBottom: 6 }}><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/></svg>
+                      <div style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: 12, fontWeight: 600 }}>Click to View Document</div>
+                    </div>
+                  ) : (
+                    <img src={cert.src} alt={cert.label} style={{ maxHeight: 150, maxWidth: '100%', objectFit: 'contain', borderRadius: 6 }} loading="lazy" />
+                  )}
+                </div>
+                <div style={{ padding: '16px 20px' }}>
+                  <div style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: 14, fontWeight: 700, color: 'var(--slate)', marginBottom: 2 }}>{cert.title}</div>
+                  <div style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: 12, color: 'var(--steel)' }}>{cert.label}</div>
+                </div>
               </div>
-              <div>
-                <h4 className="text-lg font-bold text-white mb-2 font-heading">Proven Track Record</h4>
-                <p className="text-blue-100 text-sm leading-relaxed">Over 1000 successful placements with a 100% client satisfaction rate across 50+ countries.</p>
-              </div>
-            </div>
-            
-            <div className="flex gap-4">
-              <div className="w-12 h-12 rounded-xl bg-amber-300/20 flex items-center justify-center flex-shrink-0">
-                <svg className="w-6 h-6 text-amber-305" fill="currentColor" viewBox="0 0 20 20">
-                  <path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z"/>
-                  <path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z"/>
-                </svg>
-              </div>
-              <div>
-                <h4 className="text-lg font-bold text-white mb-2 font-heading">Expert Team</h4>
-                <p className="text-blue-100 text-sm leading-relaxed">Experienced professionals dedicated to understanding your needs and delivering results.</p>
-              </div>
-            </div>
-            
-            <div className="flex gap-4">
-              <div className="w-12 h-12 rounded-xl bg-amber-300/20 flex items-center justify-center flex-shrink-0">
-                <svg className="w-6 h-6 text-amber-305" fill="currentColor" viewBox="0 0 20 20">
-                  <path fillRule="evenodd" d="M11.3 1.046A1 1 0 0112 2v5h4a1 1 0 01.82 1.573l-7 10A1 1 0 018 17v-5H4a1 1 0 01-.82-1.573l7-10a1 1 0 011.12-.381z" clipRule="evenodd"/>
-                </svg>
-              </div>
-              <div>
-                <h4 className="text-lg font-bold text-white mb-2 font-heading">Quick Processing</h4>
-                <p className="text-blue-100 text-sm leading-relaxed">Fast-track applications with efficient documentation and rapid placement timelines.</p>
-              </div>
-            </div>
+            ))}
           </div>
         </div>
+        <style>{`
+          .cert-section { padding: 90px 60px; }
+          .cert-grid { grid-template-columns: repeat(3, 1fr); }
+          @media (max-width: 900px) { .cert-grid { grid-template-columns: 1fr !important; } }
+          @media (max-width: 640px) { .cert-section { padding: 56px 20px !important; } }
+        `}</style>
       </section>
 
-      {/* CTA Section */}
-      <section className="py-20 px-4 scroll-scale-in">
-        <div className="container mx-auto max-w-4xl">
-          <div className="bg-gradient-to-r from-blue-50 to-slate-50 border-2 border-amber-300/30 text-center py-16 px-8 rounded-3xl shadow-xl hover:shadow-2xl transition-all duration-300">
-            <h3 className="text-3xl font-bold text-blue-900 mb-4 font-heading">Ready to Start Your Journey?</h3>
-            <p className="text-gray-700 mb-8 text-lg">
-              Join thousands of professionals who have successfully placed jobs globally through us.
+      {/* ═══════════════════════════════
+          DUAL CTA — Employer & Candidate
+      ═══════════════════════════════ */}
+      <section style={{ display: 'grid', gridTemplateColumns: '1fr 1fr' }} className="dual-cta-section">
+        {/* Employer CTA */}
+        <div style={{ background: 'var(--slate)', padding: '72px 60px', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+          <div className="scroll-reveal">
+            <div style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: 11, fontWeight: 700, color: 'var(--gold)', letterSpacing: '0.18em', textTransform: 'uppercase', marginBottom: 16 }}>Employer Consultation</div>
+            <h2 style={{ fontFamily: "'Playfair Display', serif", fontSize: 'clamp(24px, 2.5vw, 38px)', fontWeight: 700, color: '#fff', lineHeight: 1.2, marginBottom: 16 }}>
+              Need Reliable Overseas Manpower?
+            </h2>
+            <p style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: 14.5, color: 'rgba(255,255,255,0.65)', lineHeight: 1.7, marginBottom: 32, maxWidth: 420 }}>
+              Submit your project workforce requirements and speak directly with our recruitment delegation team.
             </p>
-            <Link to="/apply" className="px-7 py-3.5 bg-gradient-to-r from-[#e11d48] to-[#be123c] hover:from-[#be123c] hover:to-[#9f1239] text-white text-sm font-bold rounded-xl shadow-lg shadow-amber-500/20 inline-flex items-center gap-2">
-              <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                <path d="M13 6a3 3 0 11-6 0 3 3 0 016 0zM18 8a2 2 0 11-4 0 2 2 0 014 0zM14 15a4 4 0 00-8 0v3h8v-3zM6 8a2 2 0 11-4 0 2 2 0 014 0z"/>
-              </svg>
-              Apply Now
+            <Link to="/contact-info" id="cta-employer-requirement"
+              style={{ display: 'inline-flex', alignItems: 'center', gap: 8, padding: '13px 26px', background: 'var(--gold)', color: 'var(--slate)', fontFamily: "'Plus Jakarta Sans', sans-serif", fontWeight: 700, fontSize: 13.5, borderRadius: 10, textDecoration: 'none', transition: 'all 0.25s ease' }}
+              onMouseEnter={e => { e.currentTarget.style.background = 'var(--gold-light)'; }}
+              onMouseLeave={e => { e.currentTarget.style.background = 'var(--gold)'; }}
+            >
+              Submit Requirement <svg width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
             </Link>
           </div>
         </div>
+
+        {/* Candidate CTA */}
+        <div style={{ background: 'var(--cobalt)', padding: '72px 60px', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+          <div className="scroll-reveal">
+            <div style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: 11, fontWeight: 700, color: 'rgba(255,255,255,0.8)', letterSpacing: '0.18em', textTransform: 'uppercase', marginBottom: 16 }}>Candidate Registration</div>
+            <h2 style={{ fontFamily: "'Playfair Display', serif", fontSize: 'clamp(24px, 2.5vw, 38px)', fontWeight: 700, color: '#fff', lineHeight: 1.2, marginBottom: 16 }}>
+              Looking for International Placement?
+            </h2>
+            <p style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: 14.5, color: 'rgba(255,255,255,0.75)', lineHeight: 1.7, marginBottom: 32, maxWidth: 420 }}>
+              Register your trade skills and credentials with our Buxar office for upcoming client interviews and overseas job calls.
+            </p>
+            <Link to="/contact-info" id="cta-candidate-opportunity"
+              style={{ display: 'inline-flex', alignItems: 'center', gap: 8, padding: '13px 26px', background: '#fff', color: 'var(--cobalt)', fontFamily: "'Plus Jakarta Sans', sans-serif", fontWeight: 700, fontSize: 13.5, borderRadius: 10, textDecoration: 'none', transition: 'all 0.25s ease' }}
+              onMouseEnter={e => { e.currentTarget.style.background = 'var(--cream)'; }}
+              onMouseLeave={e => { e.currentTarget.style.background = '#fff'; }}
+            >
+              Explore Opportunities <svg width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+            </Link>
+          </div>
+        </div>
+
+        <style>{`
+          .dual-cta-section { grid-template-columns: 1fr 1fr; }
+          @media (max-width: 768px) { .dual-cta-section { grid-template-columns: 1fr !important; } }
+        `}</style>
       </section>
 
-      {/* Lightbox Modal */}
-      <Modal
-        isOpen={modalOpen}
-        onClose={() => setModalOpen(false)}
-        title={modalContent.title}
-        size="lg"
-      >
-        <div className="flex items-center justify-center p-2">
-          {modalContent.src.toLowerCase().endsWith('.pdf') ? (
-            <iframe
-              src={modalContent.src}
-              title={modalContent.title}
-              className="w-full h-[70vh] rounded-lg border border-slate-100"
-            />
-          ) : (
-            <img 
-              src={modalContent.src} 
-              alt={modalContent.title} 
-              className="max-w-full max-h-[70vh] object-contain rounded-lg shadow-md border border-slate-100" 
-            />
-          )}
+      {/* ═══════════════════════════════
+          MAIN CTA — Strategic Footer Lead
+      ═══════════════════════════════ */}
+      <section style={{ background: '#0d1420', padding: '80px 60px', textAlign: 'center', color: '#fff' }} className="main-cta-section">
+        <div style={{ maxWidth: 640, margin: '0 auto' }}>
+          <h2 style={{ fontFamily: "'Playfair Display', serif", fontSize: 'clamp(26px, 3.5vw, 48px)', fontWeight: 700, lineHeight: 1.2, marginBottom: 16 }}>
+            Ready to Build Your International Team?
+          </h2>
+          <p style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: 15, color: 'rgba(255,255,255,0.6)', lineHeight: 1.7, marginBottom: 36 }}>
+            Contact our senior recruitment specialists at RKR Globalpath HR Manpower for tailored manpower solutions and official documentation advice.
+          </p>
+          <div style={{ display: 'flex', gap: 16, justifyContent: 'center', flexWrap: 'wrap' }}>
+            <Link to="/contact-info" id="cta-final-manpower"
+              style={{ display: 'inline-flex', alignItems: 'center', gap: 8, padding: '14px 32px', background: 'var(--gold)', color: 'var(--slate)', fontFamily: "'Plus Jakarta Sans', sans-serif", fontWeight: 700, fontSize: 14, borderRadius: 10, textDecoration: 'none', transition: 'all 0.25s ease' }}
+              onMouseEnter={e => { e.currentTarget.style.background = 'var(--gold-light)'; }}
+              onMouseLeave={e => { e.currentTarget.style.background = 'var(--gold)'; }}
+            >
+              Get Manpower Now <svg width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+            </Link>
+            <a href={`tel:${CONTACT_INFO.phone}`}
+              style={{ display: 'inline-flex', alignItems: 'center', gap: 8, padding: '13px 28px', background: 'transparent', color: 'rgba(255,255,255,0.85)', fontFamily: "'Plus Jakarta Sans', sans-serif", fontWeight: 600, fontSize: 14, borderRadius: 10, textDecoration: 'none', border: '1.5px solid rgba(255,255,255,0.2)', transition: 'all 0.25s ease' }}
+              onMouseEnter={e => { e.currentTarget.style.background = 'rgba(255,255,255,0.08)'; }}
+              onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; }}
+            >
+              Call {CONTACT_INFO.phone}
+            </a>
+          </div>
         </div>
-      </Modal>
+      </section>
+
+      <Modal isOpen={modalOpen} onClose={() => setModalOpen(false)} src={modalContent.src} title={modalContent.title} />
     </div>
   );
 };

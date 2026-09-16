@@ -27,6 +27,42 @@ function mapJobRow(row) {
   };
 }
 
+async function ensureTables() {
+  try {
+    await db.query(`
+      CREATE TABLE IF NOT EXISTS job_requirements (
+        id               INT AUTO_INCREMENT PRIMARY KEY,
+        position_title   VARCHAR(150) NOT NULL,
+        description      LONGTEXT,
+        requirements     TEXT,
+        experience_needed VARCHAR(100),
+        salary_range     VARCHAR(100),
+        location         VARCHAR(150),
+        status           VARCHAR(50) DEFAULT 'active',
+        created_at       TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        updated_at       TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+      ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4
+    `);
+    await db.query(`
+      CREATE TABLE IF NOT EXISTS applications (
+        id           INT AUTO_INCREMENT PRIMARY KEY,
+        name         VARCHAR(150) NOT NULL,
+        email        VARCHAR(150) NOT NULL,
+        phone        VARCHAR(50) NOT NULL,
+        job_position VARCHAR(150) NOT NULL,
+        experience   VARCHAR(50) NOT NULL,
+        resume_file  VARCHAR(255) NOT NULL,
+        file_path    VARCHAR(255) NOT NULL,
+        message      TEXT,
+        status       VARCHAR(50) DEFAULT 'pending',
+        created_at   TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4
+    `);
+  } catch (e) {
+    console.warn('[jobs] table auto-create warning:', e.message);
+  }
+}
+
 /**
  * GET /api/jobs.php
  * Query params:
@@ -34,8 +70,9 @@ function mapJobRow(row) {
  *   ?slug=X → single job by slug
  *   (none)  → all active jobs
  */
-router.get('/api/jobs.php', async (req, res) => {
+router.get(['/api/jobs.php', '/api/jobs'], async (req, res) => {
   try {
+    await ensureTables();
     const id   = parseInt(req.query.id)  || 0;
     const slug = req.query.slug || '';
 

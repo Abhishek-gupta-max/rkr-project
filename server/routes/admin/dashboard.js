@@ -7,7 +7,7 @@ const { requireAdminAuth } = require('../../middleware/auth');
  * Returns stats + latest 5 applications.
  * Mirrors admin/dashboard.php
  */
-router.get('/api/admin/dashboard.php', requireAdminAuth, async (req, res) => {
+router.get(['/api/admin/dashboard.php', '/api/admin/dashboard'], requireAdminAuth, async (req, res) => {
   try {
     const [[{ total_apps }]]   = await db.query('SELECT COUNT(*) AS total_apps FROM applications');
     const [[{ pending_apps }]] = await db.query("SELECT COUNT(*) AS pending_apps FROM applications WHERE status='pending'");

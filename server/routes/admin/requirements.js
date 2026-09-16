@@ -29,7 +29,8 @@ async function ensureTable() {
  *
  * Mirrors admin/requirements.php
  */
-router.route('/api/admin/requirements.php')
+const reqPaths = ['/api/admin/requirements.php', '/api/admin/requirements'];
+router.route(reqPaths)
 
   // ── GET ─────────────────────────────────────────────────────────────────────
   .get(requireAdminAuth, async (req, res) => {

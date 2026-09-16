@@ -18,7 +18,7 @@ export const Loader = ({ active = true }) => {
             </svg>
           </div>
         </div>
-        <div className="loader-text">New Adarsh Manpower</div>
+        <div className="loader-text">RKR Global Path</div>
         <div className="loader-bar">
           <div className="loader-bar-fill"></div>
         </div>

@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
 
@@ -50,7 +50,7 @@ export const Login = () => {
             </svg>
           </div>
           <h1 className="text-4xl font-bold text-white mb-2 font-heading">Admin Portal</h1>
-          <p className="text-blue-100 text-sm">New Adarsh Manpower Consultant</p>
+          <p className="text-blue-100 text-sm">RKR Global Path HR &amp; Manpower</p>
         </div>
 
         {/* Login Form Card */}

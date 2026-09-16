@@ -27,7 +27,7 @@ export const About = () => {
         <div className="container mx-auto px-4 max-w-6xl relative z-10">
           <div className="text-center animate-fade-in-up">
             <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold mb-6 leading-tight font-heading">
-              <span className="text-amber-300">About New Adarsh</span>
+              <span className="text-amber-300">About RKR Globalpath HR Manpower</span>
             </h1>
             <p className="text-xl text-blue-100 max-w-2xl mx-auto leading-relaxed">
               Your trusted partner in global manpower recruitment
@@ -44,13 +44,13 @@ export const About = () => {
             <div className="scroll-fade-in-left">
               <h2 className="text-4xl font-bold text-blue-900 mb-6 font-heading">Our Story</h2>
               <p className="text-slate-700 text-lg mb-4 leading-relaxed">
-                I founded New Adarsh Manpower with a single mission: to remove fear, fraud, and uncertainty from job placement services. For over 15 years, I have personally worked to ensure that every candidate we place enters a safe, verified, and dignified workplace.
+                RKR Globalpath HR Manpower was founded with one clear mission: to provide honest, legal, and transparent overseas recruitment services to skilled professionals across India. Based in Buxar, Bihar, we serve job seekers from across the country who aspire to build global careers.
               </p>
               <p className="text-slate-700 text-lg mb-4 leading-relaxed">
-                At New Adarsh Manpower, we don’t just fill positions — we build careers, create opportunities, and earn trust. Every job seeker deserves transparency, security, and guidance, while every employer deserves reliable and dedicated talent.
+                We are a Government of India licensed recruitment agency (License No: B-3489/BIH/PER/100/5/11494/2026) approved by the Ministry of External Affairs (MEA). Our team ensures that every placement is 100% legal, every document verified, and every candidate treated with dignity and respect.
               </p>
               <p className="text-slate-700 text-lg mb-4 leading-relaxed">
-                Whether you are a job seeker searching for the right opportunity or an employer seeking dependable manpower, you have my personal commitment to honesty, transparency, and quality service.
+                At RKR Globalpath, we don't just fill positions — we build careers, create opportunities, and earn trust. Every job seeker deserves transparency, security, and proper guidance, while every employer deserves reliable and dedicated talent.
               </p>
               <p className="text-slate-700 text-lg mb-4 leading-relaxed">
                 Your trust is our responsibility, and your success is our mission.
@@ -61,17 +61,15 @@ export const About = () => {
             <div className="scroll-fade-in-right">
               <div className="bg-white rounded-2xl shadow-xl overflow-hidden border border-slate-100 hover:shadow-2xl transition-all duration-300">
                 <div className="bg-gradient-to-br from-blue-50 to-blue-100 h-[24rem] sm:h-[26rem] flex items-center justify-center relative overflow-hidden">
-                  <img src="/images/corporate_desk_empty_team.jpeg" alt="Owner - New Adarsh" className="w-full h-full object-cover" />
+                  <img src="/images/corporate_desk_empty_team.jpeg" alt="RKR Global Path Management" className="w-full h-full object-cover" />
                   <div className="absolute bottom-0 left-0 right-0 h-1.5 bg-gradient-to-r from-amber-400 to-amber-600"></div>
                 </div>
                 
                 <div className="p-6 flex flex-col h-full">
                   <div>
-                    <h3 className="text-2xl font-bold text-blue-900 mb-1 font-heading">Ram Pramod Patel</h3>
-                    <p className="text-amber-600 font-semibold mb-4">Founder & Director</p>
-                    <p className="text-slate-600 text-sm leading-relaxed mb-6">
-                      With 15+ years of experience in overseas recruitment, Ram Pramod Patel leads New Adarsh with a commitment to ethical practices and transparent operations. His vision has transformed countless lives by connecting skilled professionals with global opportunities.
-                    </p>
+                    <h3 className="text-2xl font-bold text-blue-900 mb-1 font-heading">RKR Globalpath Team</h3>
+                    <p className="text-amber-600 font-semibold mb-3">HR Recruitment & Placement Experts</p>
+                    <p className="text-slate-600 text-sm leading-relaxed">Licensed by the Ministry of External Affairs, our team ensures every candidate gets a safe, verified, and dignified overseas placement. Bihar-based, globally connected.</p>
                   </div>
                   <div className="pt-4 border-t border-gray-100 space-y-2">
                     <div className="flex items-center gap-3 text-sm text-slate-600">
@@ -380,7 +378,7 @@ export const About = () => {
       {/* Why Choose Us */}
       <section className="py-20 px-4 bg-gradient-to-r from-brandBlue to-blue-900 text-white">
         <div className="container mx-auto max-w-6xl">
-          <h2 className="text-4xl font-bold text-white mb-12 text-center font-heading">Why Choose New Adarsh</h2>
+          <h2 className="text-4xl font-bold text-white mb-12 text-center font-heading">Why Choose RKR Globalpath</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
             <div className="flex gap-4">
               <div className="w-12 h-12 rounded-lg bg-amber-300/20 flex items-center justify-center flex-shrink-0">

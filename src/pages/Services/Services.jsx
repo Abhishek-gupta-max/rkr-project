@@ -1,186 +1,213 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import useScrollAnimation from '../../hooks/useScrollAnimation';
+
+const SERVICES_FULL = [
+  {
+    num: '01', type: 'Overseas Recruitment',
+    title: 'Overseas Manpower Recruitment',
+    description: 'End-to-end international placement of skilled, semi-skilled, and unskilled manpower to verified overseas employers across Gulf and Asia.',
+    image: '/images/corporate_desk_empty_team.jpeg',
+    details: ['Demand letter processing', 'Employer verification', 'Candidate sourcing & screening', 'End-to-end deployment support'],
+  },
+  {
+    num: '02', type: 'Construction & Civil',
+    title: 'Construction & Civil Workforce',
+    description: 'Mason, Plumber, Electrician, Carpenter, Welder, Painter, Fitter, Rigger, Steel Fixers and general Construction Labour for projects across the Gulf and Middle East.',
+    image: '/images/modern_indian_skilled_trades.jpeg',
+    details: ['Civil engineers & supervisors', 'Mason, welder, rigger, scaffolder', 'Electrical & plumbing trades', 'Heavy equipment operators'],
+  },
+  {
+    num: '03', type: 'Healthcare',
+    title: 'Healthcare Professionals',
+    description: 'Registered Nurses, Doctors, Lab Technicians, Paramedics, Medical Assistants and Caregivers with complete licensing support for international placements.',
+    image: '/images/hospital.jpeg',
+    details: ['Registered nurses & doctors', 'Lab technicians & paramedics', 'Caregivers & medical assistants', 'Licensing & attestation support'],
+  },
+  {
+    num: '04', type: 'Hospitality',
+    title: 'Hospitality & Hotel Staff',
+    description: 'Chefs, Cooks, Waiters, Housekeeping Staff, Hospitality Managers, Stewards and Retail Professionals for hotels, restaurants and consumer businesses worldwide.',
+    image: '/images/hospitality.jpeg',
+    details: ['Chefs, cooks, stewards', 'Front desk & reception staff', 'Housekeeping supervisors', 'Retail & F&B professionals'],
+  },
+  {
+    num: '05', type: 'Oil & Gas',
+    title: 'Oil, Gas & Energy Sector',
+    description: 'Rig Workers, Safety Officers, Engineers, Heavy Equipment Operators and Pipeline Workers for energy and large infrastructure projects globally.',
+    image: '/images/oil.jpeg',
+    details: ['Rig workers & pipeline crew', 'Safety officers (NEBOSH/IOSH)', 'Heavy equipment operators', 'Process engineers & technicians'],
+  },
+  {
+    num: '06', type: 'IT & Corporate',
+    title: 'IT & BPO Professionals',
+    description: 'Software Developers, Data Analysts, Network Engineers, Customer Service Executives and Business Process Specialists for global tech companies.',
+    image: '/images/IT.jpeg',
+    details: ['Software developers & engineers', 'Data analysts & QA testers', 'Network & system admins', 'BPO & customer service staff'],
+  },
+];
+
+const PROCESS_STEPS = [
+  { num: '01', title: 'Demand Letter', desc: 'Employer submits workforce requirements and terms of employment.' },
+  { num: '02', title: 'Employer Verification', desc: 'We verify employer credentials, job offers, and destination country laws.' },
+  { num: '03', title: 'Candidate Screening', desc: 'Rigorous shortlisting from our verified candidate database.' },
+  { num: '04', title: 'Interview Coordination', desc: 'Facilitate in-person or virtual interviews between employer and candidates.' },
+  { num: '05', title: 'Offer & Documentation', desc: 'Issue offer letters and assist with all legal documentation.' },
+  { num: '06', title: 'Joining Support', desc: 'Visa processing, medical, travel coordination and pre-departure briefing.' },
+];
 
 export const Services = () => {
-  useScrollAnimation();
-
-  const servicesList = [
-    {
-      type: 'Technical',
-      title: 'Skilled Technical Workers',
-      description: 'Engineers, welders, electricians, HVAC technicians, and industrial fitters certified and ready for global deployment.',
-      image: '/images/modern_indian_skilled_trades.jpeg',
-      icon: (
-        <svg className="w-8 h-8 text-amber-400" fill="currentColor" viewBox="0 0 20 20">
-          <path d="M13 6a3 3 0 11-6 0 3 3 0 016 0zM18 8a2 2 0 11-4 0 2 2 0 014 0zM14 15a4 4 0 00-8 0v3h8v-3zM6 8a2 2 0 11-4 0 2 2 0 014 0z" />
-        </svg>
-      )
-    },
-    {
-      type: 'Healthcare',
-      title: 'Healthcare Professionals',
-      description: 'Registered nurses, doctors, lab technicians, and paramedics with complete licensing support for international placements.',
-      image: '/images/hospital.jpeg',
-      icon: (
-        <svg className="w-8 h-8 text-amber-400" fill="currentColor" viewBox="0 0 20 20">
-          <path d="M10.894 2.553a1 1 0 00-1.788 0l-7 14a1 1 0 001.169 1.409l5.951-1.429 5.951 1.429a1 1 0 001.169-1.409l-7-14z" />
-        </svg>
-      )
-    },
-    {
-      type: 'Tech',
-      title: 'IT & BPO Professionals',
-      description: 'Software developers, data analysts, and customer service executives for global tech companies and outsourcing needs.',
-      image: '/images/IT.jpeg',
-      icon: (
-        <svg className="w-8 h-8 text-amber-400" fill="currentColor" viewBox="0 0 20 20">
-          <path fillRule="evenodd" d="M6.625 2.655A9 9 0 0119 11a9 9 0 11-9.655-8.345 1.40625 1.40625 0 11-.75 1.977A7.002 7.002 0 0117 11a7 7 0 11-8.235-6.89 1.406 1.406 0 11.79-1.465A9.001 9.001 0 006.625 2.655z" clipRule="evenodd" />
-        </svg>
-      )
-    },
-    {
-      type: 'Hospitality',
-      title: 'Hospitality & Retail',
-      description: 'Chefs, housekeeping staff, hospitality managers, and retail professionals for hotels and consumer businesses worldwide.',
-      image: '/images/hospitality.jpeg',
-      icon: (
-        <svg className="w-8 h-8 text-amber-400" fill="currentColor" viewBox="0 0 20 20">
-          <path d="M9 3a1 1 0 0 1 .293.708l.756 2.268a1 1 0 0 0 .894.632h2.385a1 1 0 0 1 .674 1.78l-1.921 1.417a1 1 0 0 0-.327 1.12l.756 2.268a1 1 0 0 1-1.55 1.116L9 13.122l-1.96 1.435a1 1 0 0 1-1.55-1.116l.756-2.268a1 1 0 0 0-.327-1.12L3.894 9.408a1 1 0 0 1 .674-1.78h2.385a1 1 0 0 0 .894-.632l.756-2.268A1 1 0 0 1 9 3Z" />
-        </svg>
-      )
-    },
-    {
-      type: 'Energy',
-      title: 'Oil, Gas & Construction',
-      description: 'Rig workers, safety officers, engineers, and heavy equipment operators for energy and infrastructure projects.',
-      image: '/images/oil.jpeg',
-      icon: (
-        <svg className="w-8 h-8 text-amber-400" fill="currentColor" viewBox="0 0 20 20">
-          <path d="M3 4a1 1 0 0 1 1-1h12a1 1 0 0 1 1 1v2a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V4Zm0 6a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v6a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1v-6Zm10-1a1 1 0 0 0-1 1v3a1 1 0 0 0 1 1h2a1 1 0 0 0 1-1v-3a1 1 0 0 0-1-1h-2Z" />
-        </svg>
-      )
-    },
-    {
-      type: 'Industrial',
-      title: 'Manufacturing & Industrial',
-      description: 'Factory workers, supervisors, quality control specialists, and machine operators for manufacturing facilities.',
-      image: '/images/corporate_desk_empty.png',
-      icon: (
-        <svg className="w-8 h-8 text-amber-400" fill="currentColor" viewBox="0 0 20 20">
-          <path d="M13 7H7v6h6V7Z" />
-          <path fillRule="evenodd" d="M7 2a1 1 0 0 1 2 0v1h2V2a1 1 0 1 1 2 0v1h2V2a1 1 0 1 1 2 0v1h2V2a1 1 0 1 1 2 0v1a2 2 0 0 1 2 2v2h1a1 1 0 0 1 1 1v2h1a1 1 0 1 1 0 2h-1v2h1a1 1 0 1 1 0 2h-1a2 2 0 0 1-2 2v1a1 1 0 1 1-2 0v-1h-2v1a1 1 0 1 1-2 0v-1h-2v1a1 1 0 1 1-2 0v-1a2 2 0 0 1-2-2H2a1 1 0 1 1 0-2h1v-2H2a1 1 0 0 1-1-1v-2a1 1 0 0 1 1-1h1V7a2 2 0 0 1 2-2v-1a1 1 0 0 1 1-1zm0 5v6h6V7H7Z" clipRule="evenodd" />
-        </svg>
-      )
-    }
-  ];
+  const [activeService, setActiveService] = useState(null);
 
   return (
-    <div>
-      {/* Hero Section */}
-      <section className="relative overflow-hidden text-white pt-32 pb-24 md:pt-40 md:pb-36 bg-cover bg-center" style={{ backgroundImage: "url('/images/corporate_desk_empty.png')" }}>
-        <div className="absolute inset-0 bg-gradient-to-r from-slate-950/95 via-blue-950/90 to-blue-900/80 pointer-events-none" />
-        
-        <div className="absolute w-[300px] h-[300px] bg-amber-500/10 rounded-full -top-[100px] -right-[100px] pointer-events-none" />
-        <div className="absolute w-[200px] h-[200px] bg-amber-500/5 rounded-full -bottom-[50px] -left-[50px] pointer-events-none" />
-        
-        <div className="container mx-auto px-4 max-w-6xl relative z-10">
-          <div className="text-center animate-fade-in-up">
-            <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold mb-6 leading-tight font-heading">
-              <span className="text-amber-300">Our Services</span>
-            </h1>
-            <p className="text-xl text-blue-100 max-w-2xl mx-auto leading-relaxed">
-              Comprehensive overseas recruitment solutions tailored to your industry needs
-            </p>
+    <div style={{ background: 'var(--cream)', minHeight: '100vh' }}>
+
+      {/* ── Hero ── */}
+      <section style={{ background: 'var(--slate)', padding: '72px 80px', position: 'relative', overflow: 'hidden' }} className="srv-hero">
+        <div style={{ position: 'absolute', inset: 0, backgroundImage: 'radial-gradient(rgba(255,255,255,0.025) 1px, transparent 1px)', backgroundSize: '28px 28px', pointerEvents: 'none' }} />
+        <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 3, background: 'linear-gradient(to right, var(--gold), var(--cobalt), var(--gold))' }} />
+        <div style={{ maxWidth: 860, margin: '0 auto', textAlign: 'center', position: 'relative', zIndex: 1 }}>
+          <div style={{ display: 'inline-flex', alignItems: 'center', gap: 8, padding: '5px 14px', borderRadius: 100, border: '1.5px solid rgba(201,168,76,0.25)', background: 'rgba(201,168,76,0.07)', fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: 11, fontWeight: 700, letterSpacing: '0.18em', textTransform: 'uppercase', color: 'var(--gold)', marginBottom: 24 }}>
+            <span style={{ width: 5, height: 5, borderRadius: '50%', background: 'var(--gold)', display: 'inline-block' }} />What We Offer
           </div>
+          <h1 style={{ fontFamily: "'Playfair Display', serif", fontSize: 'clamp(32px, 5vw, 64px)', fontWeight: 700, color: '#fff', lineHeight: 1.15, letterSpacing: '-0.02em', marginBottom: 18 }}>
+            Our Recruitment <em style={{ color: 'var(--gold)', fontStyle: 'italic' }}>Services</em>
+          </h1>
+          <p style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: 16, color: 'rgba(255,255,255,0.5)', lineHeight: 1.7, maxWidth: 520, margin: '0 auto' }}>
+            Comprehensive overseas manpower recruitment solutions tailored to your industry, scale, and international workforce needs.
+          </p>
         </div>
+        <style>{`
+          .srv-hero { padding:72px 80px; }
+          @media (max-width:1024px) { .srv-hero { padding:56px 32px !important; } }
+          @media (max-width:640px) { .srv-hero { padding:48px 20px !important; } }
+          @keyframes pulse-dot { 0%,100% { opacity:1; transform:scale(1); } 50% { opacity:0.6; transform:scale(0.8); } }
+        `}</style>
       </section>
 
-      {/* Services Section */}
-      <section className="py-20 px-4 scroll-fade-in">
-        <div className="container mx-auto max-w-6xl">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {servicesList.map((srv, idx) => (
-              <div 
-                key={idx} 
-                className="scroll-scale-in relative rounded-2xl overflow-hidden group h-[420px] shadow-xl border border-gray-200 hover:shadow-2xl transition-all duration-500"
+      {/* ── Services Grid ── */}
+      <section style={{ padding: '80px 80px', background: 'var(--mist)' }} className="srv-grid-section">
+        <div style={{ maxWidth: 1280, margin: '0 auto' }}>
+          {/* Featured first service (wide) */}
+          <div style={{ position: 'relative', height: 380, borderRadius: 20, overflow: 'hidden', marginBottom: 20, cursor: 'pointer' }}>
+            <img src={SERVICES_FULL[0].image} alt={SERVICES_FULL[0].title} style={{ width: '100%', height: '100%', objectFit: 'cover', transition: 'transform 0.7s ease' }}
+              onMouseEnter={e => { e.currentTarget.style.transform = 'scale(1.04)'; }}
+              onMouseLeave={e => { e.currentTarget.style.transform = 'scale(1)'; }}
+            />
+            <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to right, rgba(13,17,23,0.88) 0%, rgba(13,17,23,0.2) 60%, transparent 100%)' }} />
+            <div style={{ position: 'absolute', inset: 0, padding: '44px 52px', display: 'flex', flexDirection: 'column', justifyContent: 'flex-end' }}>
+              <span style={{ display: 'inline-block', padding: '4px 12px', background: 'var(--gold)', color: 'var(--slate)', borderRadius: 6, fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: 10, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.12em', marginBottom: 12, width: 'fit-content' }}>{SERVICES_FULL[0].type}</span>
+              <h2 style={{ fontFamily: "'Playfair Display', serif", fontSize: 'clamp(24px, 3vw, 40px)', fontWeight: 700, color: '#fff', marginBottom: 10, lineHeight: 1.2 }}>{SERVICES_FULL[0].title}</h2>
+              <p style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: 14, color: 'rgba(255,255,255,0.6)', maxWidth: 500, lineHeight: 1.65, marginBottom: 20 }}>{SERVICES_FULL[0].description}</p>
+              <Link to="/contact-info" style={{ display: 'inline-flex', alignItems: 'center', gap: 6, fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: 13, fontWeight: 700, color: 'var(--gold)', textDecoration: 'none' }}>
+                Request This Service <svg width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+              </Link>
+            </div>
+          </div>
+
+          {/* 2×3 grid of remaining */}
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 20 }} className="srv-inner-grid">
+            {SERVICES_FULL.slice(1).map((srv, i) => (
+              <div key={i}
+                style={{ position: 'relative', borderRadius: 16, overflow: 'hidden', cursor: 'pointer', height: 280 }}
+                onMouseEnter={() => setActiveService(i)}
+                onMouseLeave={() => setActiveService(null)}
               >
-                <img src={srv.image} alt={srv.title} className="absolute inset-0 w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
-                <div className="absolute inset-0 bg-gradient-to-t from-[#0F172A]/95 via-[#0F172A]/70 to-transparent"></div>
-                <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-amber-400 to-yellow-500"></div>
-                <div className="relative z-10 h-full flex flex-col justify-end p-8 text-white">
-                  <div className="w-16 h-16 rounded-2xl bg-amber-500/20 backdrop-blur-md border border-amber-400/30 flex items-center justify-center mb-5 shadow-lg">
-                    {srv.icon}
+                <img src={srv.image} alt={srv.title} style={{ width: '100%', height: '100%', objectFit: 'cover', transition: 'transform 0.6s ease', transform: activeService === i ? 'scale(1.06)' : 'scale(1)' }} />
+                <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to top, rgba(13,17,23,0.9) 0%, rgba(13,17,23,0.35) 60%, transparent 100%)', transition: 'opacity 0.3s ease', opacity: activeService === i ? 1 : 0.85 }} />
+                <div style={{ position: 'absolute', inset: 0, padding: '20px 24px', display: 'flex', flexDirection: 'column', justifyContent: 'flex-end' }}>
+                  <span style={{ display: 'inline-block', padding: '3px 10px', background: 'rgba(201,168,76,0.85)', color: 'var(--slate)', borderRadius: 5, fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: 9, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 8, width: 'fit-content' }}>{srv.type}</span>
+                  <h3 style={{ fontFamily: "'Playfair Display', serif", fontSize: 'clamp(16px, 1.8vw, 22px)', fontWeight: 700, color: '#fff', marginBottom: 8, lineHeight: 1.25 }}>{srv.title}</h3>
+
+                  {/* Expanded details on hover */}
+                  <div style={{ overflow: 'hidden', maxHeight: activeService === i ? 200 : 0, transition: 'max-height 0.35s ease', opacity: activeService === i ? 1 : 0 }}>
+                    <ul style={{ margin: '0 0 12px', padding: 0, listStyle: 'none' }}>
+                      {srv.details.map((d, j) => (
+                        <li key={j} style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: 11.5, color: 'rgba(255,255,255,0.6)', lineHeight: 1.5, paddingLeft: 14, position: 'relative', marginBottom: 2 }}>
+                          <span style={{ position: 'absolute', left: 0, color: 'var(--gold)' }}>›</span>{d}
+                        </li>
+                      ))}
+                    </ul>
                   </div>
-                  <h3 className="text-2xl font-bold mb-3 font-heading">{srv.title}</h3>
-                  <p className="text-gray-200 text-sm leading-relaxed mb-5">{srv.description}</p>
-                  <Link to="/apply" className="inline-flex items-center gap-2 text-amber-400 font-semibold hover:text-amber-300 transition">
-                    Apply Now <span>→</span>
+
+                  <Link to="/contact-info" style={{ display: 'inline-flex', alignItems: 'center', gap: 5, fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: 12, fontWeight: 700, color: 'var(--gold)', textDecoration: 'none' }}>
+                    Request Manpower →
                   </Link>
                 </div>
               </div>
             ))}
           </div>
         </div>
+        <style>{`
+          .srv-grid-section { padding:80px 80px; }
+          .srv-inner-grid { grid-template-columns:repeat(2,1fr); }
+          @media (max-width:1024px) { .srv-grid-section { padding:64px 32px !important; } }
+          @media (max-width:768px) { .srv-inner-grid { grid-template-columns:1fr !important; } }
+          @media (max-width:640px) { .srv-grid-section { padding:48px 20px !important; } }
+        `}</style>
       </section>
 
-      {/* Process Section */}
-      <section className="py-20 px-4 bg-gradient-to-r from-blue-50 to-slate-50 scroll-fade-in">
-        <div className="container mx-auto max-w-6xl">
-          <h2 className="text-4xl font-bold text-blue-900 mb-12 text-center font-heading">Our Recruitment Process</h2>
-          <div className="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-5 gap-6">
-            <div className="text-center bg-white p-6 rounded-2xl border border-slate-100 shadow-sm scroll-scale-in">
-              <div className="w-12 h-12 rounded-full bg-amber-300 text-blue-900 font-bold text-lg flex items-center justify-center mx-auto mb-4 font-heading">
-                1
-              </div>
-              <h4 className="font-bold text-blue-900 mb-2 font-heading text-sm">Demand Letter</h4>
-              <p className="text-slate-500 text-xs leading-relaxed">We evaluate your organization's hiring needs and target requirements.</p>
+      {/* ── Process ── */}
+      <section style={{ background: 'var(--slate)', padding: '80px 80px', position: 'relative', overflow: 'hidden' }} className="srv-process">
+        <div style={{ position: 'absolute', inset: 0, backgroundImage: 'radial-gradient(rgba(255,255,255,0.022) 1.5px, transparent 1.5px)', backgroundSize: '28px 28px', pointerEvents: 'none' }} />
+        <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 3, background: 'linear-gradient(to right, var(--gold), var(--cobalt), var(--gold))' }} />
+        <div style={{ maxWidth: 1200, margin: '0 auto', position: 'relative', zIndex: 1 }}>
+          <div style={{ textAlign: 'center', marginBottom: 56 }}>
+            <div style={{ display: 'inline-flex', alignItems: 'center', gap: 8, padding: '5px 14px', borderRadius: 100, border: '1.5px solid rgba(201,168,76,0.25)', background: 'rgba(201,168,76,0.07)', fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: 11, fontWeight: 700, letterSpacing: '0.18em', textTransform: 'uppercase', color: 'var(--gold)', marginBottom: 16 }}>
+              <span style={{ width: 5, height: 5, borderRadius: '50%', background: 'var(--gold)', display: 'inline-block' }} />Our Process
             </div>
-            <div className="text-center bg-white p-6 rounded-2xl border border-slate-100 shadow-sm scroll-scale-in">
-              <div className="w-12 h-12 rounded-full bg-amber-300 text-blue-900 font-bold text-lg flex items-center justify-center mx-auto mb-4 font-heading">
-                2
+            <h2 style={{ fontFamily: "'Playfair Display', serif", fontSize: 'clamp(26px, 3vw, 44px)', fontWeight: 700, color: '#fff', lineHeight: 1.2, letterSpacing: '-0.01em' }}>
+              Recruitment Process
+            </h2>
+          </div>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 20 }} className="srv-process-grid">
+            {PROCESS_STEPS.map((step, i) => (
+              <div key={i}
+                style={{ background: 'rgba(255,255,255,0.04)', border: '1.5px solid rgba(255,255,255,0.08)', borderRadius: 16, padding: '28px 24px', transition: 'all 0.3s ease' }}
+                onMouseEnter={e => { e.currentTarget.style.background = 'rgba(255,255,255,0.07)'; e.currentTarget.style.borderColor = 'rgba(201,168,76,0.3)'; }}
+                onMouseLeave={e => { e.currentTarget.style.background = 'rgba(255,255,255,0.04)'; e.currentTarget.style.borderColor = 'rgba(255,255,255,0.08)'; }}
+              >
+                <div style={{ fontFamily: "'Playfair Display', serif", fontSize: 48, fontWeight: 700, color: 'rgba(255,255,255,0.07)', lineHeight: 1, marginBottom: 16 }}>{step.num}</div>
+                <h3 style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: 15, fontWeight: 700, color: '#fff', marginBottom: 8, lineHeight: 1.3 }}>{step.title}</h3>
+                <p style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: 13, color: 'rgba(255,255,255,0.45)', lineHeight: 1.65 }}>{step.desc}</p>
               </div>
-              <h4 className="font-bold text-blue-900 mb-2 font-heading text-sm">Employer Verification</h4>
-              <p className="text-slate-500 text-xs leading-relaxed">We perform deep verification checks of host employers and job offers.</p>
-            </div>
-            <div className="text-center bg-white p-6 rounded-2xl border border-slate-100 shadow-sm scroll-scale-in">
-              <div className="w-12 h-12 rounded-full bg-amber-300 text-blue-900 font-bold text-lg flex items-center justify-center mx-auto mb-4 font-heading">
-                3
-              </div>
-              <h4 className="font-bold text-blue-900 mb-2 font-heading text-sm">Candidate Screening</h4>
-              <p className="text-slate-500 text-xs leading-relaxed">Candidates undergo rigorous technical evaluations and checks.</p>
-            </div>
-            <div className="text-center bg-white p-6 rounded-2xl border border-slate-100 shadow-sm scroll-scale-in">
-              <div className="w-12 h-12 rounded-full bg-amber-300 text-blue-900 font-bold text-lg flex items-center justify-center mx-auto mb-4 font-heading">
-                4
-              </div>
-              <h4 className="font-bold text-blue-900 mb-2 font-heading text-sm">Interview Coordination</h4>
-              <p className="text-slate-500 text-xs leading-relaxed">Facilitating smooth direct or virtual candidate interviews.</p>
-            </div>
-            <div className="text-center bg-white p-6 rounded-2xl border border-slate-100 shadow-sm scroll-scale-in">
-              <div className="w-12 h-12 rounded-full bg-amber-300 text-blue-900 font-bold text-lg flex items-center justify-center mx-auto mb-4 font-heading">
-                5
-              </div>
-              <h4 className="font-bold text-blue-900 mb-2 font-heading text-sm">Joining Support</h4>
-              <p className="text-slate-500 text-xs leading-relaxed">Assisting in visa stamping, travel ticketing, and orientation.</p>
-            </div>
+            ))}
           </div>
         </div>
+        <style>{`
+          .srv-process { padding:80px 80px; }
+          .srv-process-grid { grid-template-columns:repeat(3,1fr); }
+          @media (max-width:1024px) { .srv-process { padding:64px 32px !important; } .srv-process-grid { grid-template-columns:repeat(2,1fr) !important; } }
+          @media (max-width:640px) { .srv-process { padding:48px 20px !important; } .srv-process-grid { grid-template-columns:1fr !important; } }
+        `}</style>
       </section>
 
-      {/* CTA Section */}
-      <section className="py-20 px-4 scroll-scale-in">
-        <div className="container mx-auto max-w-4xl">
-          <div className="bg-gradient-to-r from-blue-50 to-slate-50 border-2 border-amber-300/30 text-center py-16 px-8 rounded-3xl shadow-xl hover:shadow-2xl transition-all duration-300">
-            <h3 className="text-3xl font-bold text-blue-900 mb-4 font-heading">Ready to Get Started?</h3>
-            <p className="text-slate-700 mb-8 text-lg">
-              Let us help you find the right talent for your organization or secure your global job.
-            </p>
-            <Link to="/contact" className="px-7 py-3.5 bg-gradient-to-r from-[#e11d48] to-[#be123c] hover:from-[#be123c] hover:to-[#9f1239] text-white text-sm font-bold rounded-xl shadow-lg shadow-amber-500/20 inline-flex items-center gap-2">
-              Request a Consultation
+      {/* ── CTA ── */}
+      <section style={{ background: 'var(--mist)', padding: '72px 80px', textAlign: 'center' }} className="srv-cta">
+        <div style={{ maxWidth: 640, margin: '0 auto' }}>
+          <h2 style={{ fontFamily: "'Playfair Display', serif", fontSize: 'clamp(26px, 3vw, 44px)', fontWeight: 700, color: 'var(--slate)', lineHeight: 1.2, letterSpacing: '-0.01em', marginBottom: 16 }}>
+            Ready to Get the Right Team?
+          </h2>
+          <p style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: 15, color: 'var(--steel)', lineHeight: 1.7, marginBottom: 36 }}>
+            Let us help you source, screen, and deploy the exact professionals your project needs — fast, legally, and reliably.
+          </p>
+          <div style={{ display: 'flex', gap: 14, justifyContent: 'center', flexWrap: 'wrap' }}>
+            <Link to="/contact-info" style={{ display: 'inline-flex', alignItems: 'center', gap: 8, padding: '14px 30px', background: 'var(--cobalt)', color: '#fff', fontFamily: "'Plus Jakarta Sans', sans-serif", fontWeight: 700, fontSize: 14, borderRadius: 10, textDecoration: 'none', boxShadow: '0 6px 20px rgba(29,78,216,0.3)', transition: 'all 0.25s ease' }}
+              onMouseEnter={e => { e.currentTarget.style.background = 'var(--cobalt-dark)'; e.currentTarget.style.transform = 'translateY(-2px)'; }}
+              onMouseLeave={e => { e.currentTarget.style.background = 'var(--cobalt)'; e.currentTarget.style.transform = 'translateY(0)'; }}
+            >
+              Request Consultation <svg width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
             </Link>
+            <Link to="/" style={{ display: 'inline-flex', alignItems: 'center', gap: 8, padding: '12px 26px', background: 'transparent', color: 'var(--slate)', fontFamily: "'Plus Jakarta Sans', sans-serif", fontWeight: 600, fontSize: 14, borderRadius: 10, textDecoration: 'none', border: '1.5px solid var(--slate)', transition: 'all 0.25s ease' }}
+              onMouseEnter={e => { e.currentTarget.style.background = 'var(--slate)'; e.currentTarget.style.color = '#fff'; }}
+              onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = 'var(--slate)'; }}
+            >View All Sections</Link>
           </div>
         </div>
+        <style>{`
+          .srv-cta { padding:72px 80px; }
+          @media (max-width:1024px) { .srv-cta { padding:56px 32px !important; } }
+          @media (max-width:640px) { .srv-cta { padding:48px 20px !important; } }
+        `}</style>
       </section>
     </div>
   );

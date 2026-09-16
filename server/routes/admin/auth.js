@@ -12,7 +12,7 @@ const ADMIN_PASSWORD  = process.env.ADMIN_PASSWORD   || 'admin@123987';
  * Returns: { success, token, username, message }
  * Mirrors admin/login.php + auth_check.php generateToken()
  */
-router.post('/api/admin/login.php', (req, res) => {
+router.post(['/api/admin/login.php', '/api/admin/login'], (req, res) => {
   const { username = '', password = '' } = req.body;
 
   if (!username || !password) {

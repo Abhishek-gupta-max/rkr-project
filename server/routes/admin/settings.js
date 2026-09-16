@@ -7,7 +7,7 @@ const { requireAdminAuth } = require('../../middleware/auth');
  * Returns system info + DB statistics.
  * Mirrors admin/settings.php
  */
-router.get('/api/admin/settings.php', requireAdminAuth, async (req, res) => {
+router.get(['/api/admin/settings.php', '/api/admin/settings'], requireAdminAuth, async (req, res) => {
   try {
     // Determine active jobs table
     const [tables] = await db.query("SHOW TABLES LIKE 'job_requirements'");

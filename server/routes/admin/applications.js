@@ -20,7 +20,8 @@ const VALID_STATUSES = ['pending', 'approved', 'rejected'];
  *
  * Mirrors admin/applications.php
  */
-router.route('/api/admin/applications.php')
+const appPaths = ['/api/admin/applications.php', '/api/admin/applications'];
+router.route(appPaths)
   // ── GET ────────────────────────────────────────────────────────────────────
   .get(requireAdminAuth, async (req, res) => {
     try {
