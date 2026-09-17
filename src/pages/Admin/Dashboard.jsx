@@ -1,4 +1,4 @@
-﻿import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import api from '../../services/api';
 import Loader from '../../components/common/Loader/Loader';
@@ -36,11 +36,16 @@ export const Dashboard = () => {
 
   const stats = data?.stats || {
     total_apps: 0,
+    new_apps: 0,
     pending_apps: 0,
-    approved_apps: 0,
-    rejected_apps: 0
+    under_review_apps: 0,
+    shortlisted_apps: 0,
+    selected_apps: 0,
+    rejected_apps: 0,
+    on_hold_apps: 0
   };
 
+  const tradeBreakdown = data?.trade_breakdown || [];
   const latestApps = data?.latest_applications || [];
 
   return (
@@ -49,14 +54,14 @@ export const Dashboard = () => {
       <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
         <div>
           <h1 className="text-3xl font-extrabold text-[#0047ba] font-heading leading-tight">Welcome back, {user || 'admin'}!</h1>
-          <p className="text-slate-500 text-sm mt-1">Here is a quick overview of recent recruiting activities.</p>
+          <p className="text-slate-500 text-sm mt-1">Recruitment summary and trade category analytics.</p>
         </div>
         <div className="flex gap-3">
           <Link to="/admin/applications" className="px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl text-sm shadow-sm transition-all">
-            View Applications
+            View All Applications
           </Link>
-          <Link to="/admin/requirements" className="px-5 py-2.5 bg-[#e11d48] hover:bg-[#be123c] text-blue-950 font-bold rounded-xl text-sm shadow-sm transition-all">
-            Manage Jobs
+          <Link to="/admin/requirements" className="px-5 py-2.5 bg-slate-800 hover:bg-slate-900 text-white font-bold rounded-xl text-sm shadow-sm transition-all">
+            Manage Job Openings
           </Link>
         </div>
       </div>
@@ -67,109 +72,147 @@ export const Dashboard = () => {
         </div>
       )}
 
-      {/* Stats Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+      {/* Stats Cards — 6 Key Metric Cards */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4">
+        
         {/* Total Applications */}
-        <div className="bg-gradient-to-br from-blue-600 to-indigo-600 text-white rounded-3xl p-6 shadow-lg relative overflow-hidden group hover:scale-[1.02] transition-transform duration-300">
-          <div className="absolute -right-4 -bottom-4 opacity-15 text-white group-hover:scale-110 transition-transform duration-300">
-            <svg className="w-24 h-24" fill="currentColor" viewBox="0 0 20 20">
-              <path d="M9 2a2 2 0 00-2 2v8a2 2 0 002 2h6a2 2 0 002-2V6l-4-4H9z" />
-            </svg>
-          </div>
-          <p className="text-blue-100 text-xs font-bold uppercase tracking-wider">Total Applications</p>
-          <h3 className="text-4xl font-extrabold font-heading mt-3">{stats.total_apps}</h3>
-          <p className="text-blue-200 text-[11px] mt-2 font-medium">All submitted resumes</p>
+        <div className="bg-slate-900 text-white rounded-2xl p-5 shadow-sm border border-slate-800">
+          <p className="text-slate-400 text-[11px] font-bold uppercase tracking-wider">Total Apps</p>
+          <h3 className="text-3xl font-extrabold font-heading mt-2">{stats.total_apps}</h3>
+          <p className="text-slate-400 text-[10px] mt-1">Submitted applications</p>
         </div>
 
-        {/* Pending */}
-        <div className="bg-gradient-to-br from-yellow-500 to-amber-500 text-white rounded-3xl p-6 shadow-lg relative overflow-hidden group hover:scale-[1.02] transition-transform duration-300">
-          <div className="absolute -right-4 -bottom-4 opacity-15 text-white group-hover:scale-110 transition-transform duration-300">
-            <svg className="w-24 h-24" fill="currentColor" viewBox="0 0 20 20">
-              <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.8 2.8a1 1 0 101.414-1.414L11 9.586V6z" clipRule="evenodd" />
-            </svg>
-          </div>
-          <p className="text-yellow-100 text-xs font-bold uppercase tracking-wider">Pending Review</p>
-          <h3 className="text-4xl font-extrabold font-heading mt-3">{stats.pending_apps}</h3>
-          <p className="text-yellow-200 text-[11px] mt-2 font-medium">Resumes awaiting evaluation</p>
+        {/* New */}
+        <div className="bg-amber-500 text-white rounded-2xl p-5 shadow-sm border border-amber-600">
+          <p className="text-amber-100 text-[11px] font-bold uppercase tracking-wider">New / Pending</p>
+          <h3 className="text-3xl font-extrabold font-heading mt-2">{stats.new_apps || stats.pending_apps}</h3>
+          <p className="text-amber-100 text-[10px] mt-1">Awaiting review</p>
         </div>
 
-        {/* Approved */}
-        <div className="bg-gradient-to-br from-emerald-500 to-green-600 text-white rounded-3xl p-6 shadow-lg relative overflow-hidden group hover:scale-[1.02] transition-transform duration-300">
-          <div className="absolute -right-4 -bottom-4 opacity-15 text-white group-hover:scale-110 transition-transform duration-300">
-            <svg className="w-24 h-24" fill="currentColor" viewBox="0 0 20 20">
-              <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-            </svg>
-          </div>
-          <p className="text-emerald-100 text-xs font-bold uppercase tracking-wider">Approved Placements</p>
-          <h3 className="text-4xl font-extrabold font-heading mt-3">{stats.approved_apps}</h3>
-          <p className="text-emerald-200 text-[11px] mt-2 font-medium">Candidates approved for job</p>
+        {/* Under Review */}
+        <div className="bg-blue-600 text-white rounded-2xl p-5 shadow-sm border border-blue-700">
+          <p className="text-blue-100 text-[11px] font-bold uppercase tracking-wider">Under Review</p>
+          <h3 className="text-3xl font-extrabold font-heading mt-2">{stats.under_review_apps}</h3>
+          <p className="text-blue-100 text-[10px] mt-1">In evaluation</p>
+        </div>
+
+        {/* Shortlisted */}
+        <div className="bg-purple-600 text-white rounded-2xl p-5 shadow-sm border border-purple-700">
+          <p className="text-purple-100 text-[11px] font-bold uppercase tracking-wider">Shortlisted</p>
+          <h3 className="text-3xl font-extrabold font-heading mt-2">{stats.shortlisted_apps}</h3>
+          <p className="text-purple-100 text-[10px] mt-1">Ready for client</p>
+        </div>
+
+        {/* Selected */}
+        <div className="bg-emerald-600 text-white rounded-2xl p-5 shadow-sm border border-emerald-700">
+          <p className="text-emerald-100 text-[11px] font-bold uppercase tracking-wider">Selected</p>
+          <h3 className="text-3xl font-extrabold font-heading mt-2">{stats.selected_apps || stats.approved_apps}</h3>
+          <p className="text-emerald-100 text-[10px] mt-1">Approved for deployment</p>
         </div>
 
         {/* Rejected */}
-        <div className="bg-gradient-to-br from-rose-500 to-red-600 text-white rounded-3xl p-6 shadow-lg relative overflow-hidden group hover:scale-[1.02] transition-transform duration-300">
-          <div className="absolute -right-4 -bottom-4 opacity-15 text-white group-hover:scale-110 transition-transform duration-300">
-            <svg className="w-24 h-24" fill="currentColor" viewBox="0 0 20 20">
-              <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
-            </svg>
-          </div>
-          <p className="text-rose-100 text-xs font-bold uppercase tracking-wider">Rejected Applications</p>
-          <h3 className="text-4xl font-extrabold font-heading mt-3">{stats.rejected_apps}</h3>
-          <p className="text-rose-200 text-[11px] mt-2 font-medium">Unsuitable applications</p>
+        <div className="bg-red-600 text-white rounded-2xl p-5 shadow-sm border border-red-700">
+          <p className="text-red-100 text-[11px] font-bold uppercase tracking-wider">Rejected</p>
+          <h3 className="text-3xl font-extrabold font-heading mt-2">{stats.rejected_apps}</h3>
+          <p className="text-red-100 text-[10px] mt-1">Unsuitable profiles</p>
         </div>
+
+      </div>
+
+      {/* Category-Wise Applications Breakdown */}
+      <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
+        <div className="flex items-center justify-between border-b border-slate-100 pb-4 mb-5">
+          <div>
+            <h2 className="text-lg font-extrabold text-slate-800 font-heading">Category-Wise Applications</h2>
+            <p className="text-slate-400 text-xs mt-0.5">Click any trade category to view filtered applications.</p>
+          </div>
+          <span className="text-xs font-bold text-blue-600 bg-blue-50 px-3 py-1.5 rounded-lg border border-blue-200">
+            {tradeBreakdown.length} Active Trade Categories
+          </span>
+        </div>
+
+        {tradeBreakdown.length === 0 ? (
+          <p className="text-slate-400 text-sm py-4 text-center">No applications submitted yet to aggregate trade statistics.</p>
+        ) : (
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
+            {tradeBreakdown.map((item, idx) => (
+              <div
+                key={idx}
+                onClick={() => navigate(`/admin/applications?trade=${encodeURIComponent(item.trade)}`)}
+                className="p-3.5 rounded-xl border border-slate-200 bg-slate-50/50 hover:bg-blue-50/50 hover:border-blue-300 transition-all cursor-pointer flex items-center justify-between group"
+              >
+                <span className="text-xs font-bold text-slate-700 group-hover:text-blue-700 truncate pr-2">
+                  {item.trade}
+                </span>
+                <span className="text-xs font-extrabold px-2.5 py-1 bg-white border border-slate-200 rounded-lg text-blue-900 group-hover:bg-blue-600 group-hover:text-white group-hover:border-blue-600 transition-all flex-shrink-0">
+                  {item.count}
+                </span>
+              </div>
+            ))}
+          </div>
+        )}
       </div>
 
       {/* Latest Submissions Table */}
-      <div className="bg-white rounded-3xl shadow-md border border-slate-100 overflow-hidden">
-        <div className="px-8 py-6 border-b border-slate-100 flex items-center justify-between">
-          <h2 className="text-xl font-bold text-slate-800 font-heading">Latest Applications</h2>
-          <Link to="/admin/applications" className="text-blue-600 hover:text-blue-700 text-sm font-bold">
-            View All →
+      <div className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+        <div className="px-6 py-5 border-b border-slate-100 flex items-center justify-between">
+          <h2 className="text-lg font-bold text-slate-800 font-heading">Recent Job Applications</h2>
+          <Link to="/admin/applications" className="text-blue-600 hover:text-blue-700 text-xs font-bold">
+            View All Applications →
           </Link>
         </div>
 
         <div className="overflow-x-auto">
           {latestApps.length === 0 ? (
-            <div className="text-center py-12 text-slate-400">
+            <div className="text-center py-12 text-slate-400 text-sm">
               <span className="text-4xl block mb-2">📋</span>
               No applications submitted yet.
             </div>
           ) : (
-            <table className="w-full text-left border-collapse">
+            <table className="w-full text-left border-collapse text-xs">
               <thead>
                 <tr className="bg-slate-50 border-b border-slate-100">
-                  <th className="px-8 py-4 text-xs font-bold text-slate-400 uppercase tracking-wider">Applicant Name</th>
-                  <th className="px-8 py-4 text-xs font-bold text-slate-400 uppercase tracking-wider">Job Position</th>
-                  <th className="px-8 py-4 text-xs font-bold text-slate-400 uppercase tracking-wider">Date Applied</th>
-                  <th className="px-8 py-4 text-xs font-bold text-slate-400 uppercase tracking-wider">Status</th>
-                  <th className="px-8 py-4 text-xs font-bold text-slate-400 uppercase tracking-wider text-right">Actions</th>
+                  <th className="px-6 py-3.5 font-bold text-slate-400 uppercase tracking-wider">App ID</th>
+                  <th className="px-6 py-3.5 font-bold text-slate-400 uppercase tracking-wider">Applicant</th>
+                  <th className="px-6 py-3.5 font-bold text-slate-400 uppercase tracking-wider">Trade / Skill</th>
+                  <th className="px-6 py-3.5 font-bold text-slate-400 uppercase tracking-wider">Applied Date</th>
+                  <th className="px-6 py-3.5 font-bold text-slate-400 uppercase tracking-wider">Status</th>
+                  <th className="px-6 py-3.5 font-bold text-slate-400 uppercase tracking-wider text-right">Actions</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100">
                 {latestApps.map((app) => (
                   <tr key={app.id} className="hover:bg-slate-50/50 transition-colors">
-                    <td className="px-8 py-4">
-                      <p className="font-bold text-slate-800 text-sm">{app.name}</p>
-                      <p className="text-xs text-slate-400 mt-0.5">{app.email} | {app.phone}</p>
+                    <td className="px-6 py-4 font-mono font-bold text-amber-600 whitespace-nowrap">
+                      {app.application_id}
                     </td>
-                    <td className="px-8 py-4 text-sm font-semibold text-slate-600">{app.job_position}</td>
-                    <td className="px-8 py-4 text-sm text-slate-500 font-medium">
-                      {new Date(app.created_at).toLocaleDateString(undefined, {
-                        year: 'numeric',
+                    <td className="px-6 py-4">
+                      <p className="font-bold text-slate-800">{app.name || app.full_name}</p>
+                      <p className="text-[11px] text-slate-400 mt-0.5">{app.email || app.phone}</p>
+                    </td>
+                    <td className="px-6 py-4 font-semibold text-slate-700">
+                      {app.trade_category || app.job_position}
+                    </td>
+                    <td className="px-6 py-4 text-slate-500 font-medium whitespace-nowrap">
+                      {new Date(app.created_at).toLocaleDateString('en-GB', {
+                        day: '2-digit',
                         month: 'short',
-                        day: 'numeric'
+                        year: 'numeric'
                       })}
                     </td>
-                    <td className="px-8 py-4">
-                      <span className={`inline-flex px-2.5 py-1 text-xs font-bold rounded-full uppercase tracking-wider ${
-                        app.status === 'approved' ? 'bg-emerald-50 text-emerald-700' :
-                        app.status === 'rejected' ? 'bg-rose-50 text-rose-700' :
-                        'bg-yellow-50 text-yellow-700'
+                    <td className="px-6 py-4">
+                      <span className={`inline-flex px-2.5 py-1 text-[10px] font-extrabold rounded-md uppercase tracking-wider ${
+                        (app.status === 'SELECTED' || app.status === 'approved') ? 'bg-emerald-100 text-emerald-800' :
+                        app.status === 'REJECTED' ? 'bg-red-100 text-red-800' :
+                        app.status === 'SHORTLISTED' ? 'bg-purple-100 text-purple-800' :
+                        app.status === 'UNDER_REVIEW' ? 'bg-blue-100 text-blue-800' :
+                        'bg-amber-100 text-amber-800'
                       }`}>
-                        {app.status}
+                        {app.status || 'NEW'}
                       </span>
                     </td>
-                    <td className="px-8 py-4 text-right">
-                      <Link to="/admin/applications" className="px-3.5 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold rounded-lg transition-colors">
+                    <td className="px-6 py-4 text-right">
+                      <Link to="/admin/applications" className="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold rounded-lg transition-colors">
                         View Details
                       </Link>
                     </td>

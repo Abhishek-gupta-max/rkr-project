@@ -3,7 +3,7 @@ import api from './api';
 export const userService = {
   // Public submissions
   submitApplication: async (formData) => {
-    // Requires multipart/form-data for file uploads
+    // Requires multipart/form-data for multi-file uploads
     const response = await api.post('/apply.php', formData, {
       headers: {
         'Content-Type': 'multipart/form-data'
@@ -18,8 +18,20 @@ export const userService = {
   },
 
   // Admin application management
-  adminGetApplications: async (search = '') => {
-    const response = await api.get(`/admin/applications.php?search=${encodeURIComponent(search)}`);
+  adminGetApplications: async (params = {}) => {
+    let query = '';
+    if (typeof params === 'string') {
+      query = `?search=${encodeURIComponent(params)}`;
+    } else {
+      const searchParams = new URLSearchParams();
+      if (params.search) searchParams.append('search', params.search);
+      if (params.trade) searchParams.append('trade', params.trade);
+      if (params.status) searchParams.append('status', params.status);
+      if (params.sort) searchParams.append('sort', params.sort);
+      query = searchParams.toString() ? `?${searchParams.toString()}` : '';
+    }
+
+    const response = await api.get(`/admin/applications.php${query}`);
     return response.data;
   },
   
@@ -33,6 +45,15 @@ export const userService = {
       action: 'update_status',
       id,
       status
+    });
+    return response.data;
+  },
+
+  adminUpdateApplicationNotes: async (id, admin_notes) => {
+    const response = await api.post('/admin/applications.php', {
+      action: 'update_notes',
+      id,
+      notes: admin_notes
     });
     return response.data;
   },

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import Modal from '../../components/common/Modal/Modal';
 import { COMPANY_NAME, CONTACT_INFO, LICENSE_NO, RA_NO, ESTABLISHED_YEAR } from '../../utils/constants';
 
@@ -92,11 +92,13 @@ const DESTINATIONS = [
 
 /* ─────────────────────────────────────────────── */
 export const Home = () => {
+  const navigate = useNavigate();
   const [modalOpen, setModalOpen] = useState(false);
   const [modalContent, setModalContent] = useState({ src: '', title: '' });
   const [activeService, setActiveService] = useState(0);
   const [activeManpowerTab, setActiveManpowerTab] = useState('skilled');
   const [hoveredStrength, setHoveredStrength] = useState(null);
+  const [hoveredTradeIndex, setHoveredTradeIndex] = useState(null);
 
   useReveal();
 
@@ -396,12 +398,37 @@ export const Home = () => {
             </div>
           </div>
 
-          {/* Grid of trades without emojis */}
+          {/* Grid of trades — Clickable to apply directly */}
           <div key={activeManpowerTab} style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 12 }} className="manpower-grid">
             {MANPOWER_DATA[activeManpowerTab].map((trade, i) => (
-              <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '14px 18px', background: 'var(--mist)', border: '1.5px solid var(--fog)', borderRadius: 10 }}>
-                <span style={{ width: 6, height: 6, borderRadius: '50%', background: 'var(--cobalt)', flexShrink: 0 }} />
-                <span style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: 13.5, fontWeight: 600, color: 'var(--slate)' }}>{trade}</span>
+              <div
+                key={i}
+                onClick={() => navigate(`/apply?trade=${encodeURIComponent(trade)}`, { state: { tradeCategory: trade } })}
+                onMouseEnter={() => setHoveredTradeIndex(i)}
+                onMouseLeave={() => setHoveredTradeIndex(null)}
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justify: 'space-between',
+                  gap: 10,
+                  padding: '14px 18px',
+                  background: hoveredTradeIndex === i ? '#fff' : 'var(--mist)',
+                  border: hoveredTradeIndex === i ? '1.5px solid var(--cobalt)' : '1.5px solid var(--fog)',
+                  borderRadius: 10,
+                  cursor: 'pointer',
+                  transform: hoveredTradeIndex === i ? 'translateY(-2px)' : 'translateY(0)',
+                  boxShadow: hoveredTradeIndex === i ? '0 6px 16px rgba(29,78,216,0.12)' : 'none',
+                  transition: 'all 0.2s ease',
+                }}
+                title={`Apply for ${trade}`}
+              >
+                <div style={{ display: 'flex', alignItems: 'center', gap: 10, overflow: 'hidden' }}>
+                  <span style={{ width: 6, height: 6, borderRadius: '50%', background: hoveredTradeIndex === i ? 'var(--gold)' : 'var(--cobalt)', flexShrink: 0, transition: 'background 0.2s' }} />
+                  <span style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: 13.5, fontWeight: hoveredTradeIndex === i ? 700 : 600, color: hoveredTradeIndex === i ? 'var(--cobalt)' : 'var(--slate)', transition: 'color 0.2s' }}>{trade}</span>
+                </div>
+                <span style={{ fontSize: 12, fontWeight: 700, color: 'var(--cobalt)', opacity: hoveredTradeIndex === i ? 1 : 0, transform: hoveredTradeIndex === i ? 'translateX(0)' : 'translateX(-4px)', transition: 'all 0.2s ease', flexShrink: 0 }}>
+                  Apply →
+                </span>
               </div>
             ))}
           </div>

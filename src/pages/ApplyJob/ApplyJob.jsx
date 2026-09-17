@@ -1,383 +1,615 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { useLocation, Link } from 'react-router-dom';
+import { useLocation, useNavigate, Link } from 'react-router-dom';
 import userService from '../../services/userService';
 import { validateEmail, validatePhone, validateFileSize, validateFileType } from '../../utils/validators';
 import useScrollAnimation from '../../hooks/useScrollAnimation';
 
+const SKILL_CATEGORIES_LIST = [
+  'Civil Engineers', 'Electrical Engineers', 'Mechanical Engineers',
+  'Welders (3G / 6G / TIG / MIG)', 'Pipefitters & Fabricators', 'Electricians (Industrial & Commercial)',
+  'Plumbers & Pipe Mechanics', 'Masons & Bricklayers', 'Steel Fixers & Bar Benders',
+  'Heavy Equipment Operators', 'Scaffolders & Riggers', 'Carpenters (Shuttering & Furniture)',
+  'HVAC Technicians', 'Auto Mechanics & Technicians', 'Industrial Painters', 'Safety Officers',
+  'Security Guards & Officers', 'Factory Line Operators', 'Machine Mechanics Helpers',
+  'Cooks & Kitchen Specialists', 'Forklift Operators', 'Warehouse Staff',
+  'Light Vehicle Drivers', 'Housekeeping Supervisors', 'Electrician Assistants',
+  'Plumbing Helpers', 'AC Technician Helpers', 'Painter Assistants',
+  'General Site Labourers', 'Cleaners & Janitors', 'Agricultural Workers',
+  'Packers & Cargo Handlers', 'Loading & Unloading Staff', 'Domestic Support Staff',
+  'Facility Maintenance Helpers', 'Office Assistants', 'Watchmen & Groundskeepers',
+  'Sanitation Workers', 'Fleet Washers', 'Kitchen Stewards'
+];
+
+const PREFERRED_COUNTRIES = [
+  'UAE / Dubai', 'Saudi Arabia', 'Qatar', 'Oman', 'Kuwait', 'Bahrain', 'Sri Lanka', 'Russia', 'Other International Markets'
+];
+
 export const ApplyJob = () => {
   useScrollAnimation();
-
   const location = useLocation();
-  const fileInputRef = useRef(null);
+  const navigate = useNavigate();
 
+  const cvInputRef = useRef(null);
+  const passportInputRef = useRef(null);
+  const expCertInputRef = useRef(null);
+  const otherDocInputRef = useRef(null);
+
+  // Form State
   const [formData, setFormData] = useState({
-    name: '',
+    full_name: '',
+    father_name: '',
+    date_of_birth: '',
+    gender: 'Male',
+    mobile_number: '',
+    whatsapp_number: '',
     email: '',
-    phone: '',
-    job_position: '',
-    experience: '',
-    message: ''
+    current_city: '',
+    current_country: 'India',
+    trade_category: '',
+    total_experience: '',
+    relevant_experience: '',
+    current_job_title: '',
+    previous_company: '',
+    preferred_country: 'UAE / Dubai',
+    expected_salary: '',
+    primary_skill: '',
+    additional_skills: '',
+    certifications: '',
+    passport_number: '',
+    passport_expiry: '',
+    message: '',
+    consent: false
   });
-  const [resumeFile, setResumeFile] = useState(null);
-  const [dragActive, setDragActive] = useState(false);
+
+  // File States
+  const [cvFile, setCvFile] = useState(null);
+  const [passportFile, setPassportFile] = useState(null);
+  const [expCertFile, setExpCertFile] = useState(null);
+  const [otherDocFile, setOtherDocFile] = useState(null);
+
   const [loading, setLoading] = useState(false);
   const [status, setStatus] = useState({ type: '', message: '' });
+  const [submittedData, setSubmittedData] = useState(null);
 
-  // Pre-fill job position if passed in state
+  // Auto-populate trade category from URL query param or state
   useEffect(() => {
-    if (location.state?.jobPosition) {
+    const params = new URLSearchParams(location.search);
+    const tradeFromUrl = params.get('trade');
+    const tradeFromState = location.state?.tradeCategory || location.state?.jobPosition;
+
+    const selectedTrade = tradeFromUrl || tradeFromState;
+    if (selectedTrade) {
       setFormData((prev) => ({
         ...prev,
-        job_position: location.state.jobPosition
+        trade_category: selectedTrade
       }));
     }
   }, [location]);
 
   const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
+    const { name, value, type, checked } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [name]: type === 'checkbox' ? checked : value
+    }));
   };
 
-  const handleFileChange = (e) => {
+  const handleFileSelect = (e, setFile, label) => {
     if (e.target.files && e.target.files[0]) {
       const file = e.target.files[0];
-      
-      // Validate file size and type
       if (!validateFileSize(file, 5)) {
-        setStatus({ type: 'error', message: 'File size must be less than 5MB!' });
+        setStatus({ type: 'error', message: `${label} size must be less than 5MB!` });
         return;
       }
       const allowedExtensions = ['.pdf', '.doc', '.docx', '.jpg', '.jpeg', '.png'];
       if (!validateFileType(file, allowedExtensions)) {
-        setStatus({ type: 'error', message: 'Only PDF, DOC, DOCX, JPG, JPEG, PNG files are allowed!' });
+        setStatus({ type: 'error', message: `${label} must be a PDF, DOC, DOCX, JPG, JPEG, or PNG file!` });
         return;
       }
-
-      setResumeFile(file);
-      setStatus({ type: '', message: '' }); // Clear any errors
-    }
-  };
-
-  const handleDrag = (e) => {
-    e.preventDefault();
-    e.stopPropagation();
-    if (e.type === 'dragenter' || e.type === 'dragover') {
-      setDragActive(true);
-    } else if (e.type === 'dragleave') {
-      setDragActive(false);
-    }
-  };
-
-  const handleDrop = (e) => {
-    e.preventDefault();
-    e.stopPropagation();
-    setDragActive(false);
- 
-    if (e.dataTransfer.files && e.dataTransfer.files[0]) {
-      const file = e.dataTransfer.files[0];
-      
-      // Validate
-      if (!validateFileSize(file, 5)) {
-        setStatus({ type: 'error', message: 'File size must be less than 5MB!' });
-        return;
-      }
-      const allowedExtensions = ['.pdf', '.doc', '.docx', '.jpg', '.jpeg', '.png'];
-      if (!validateFileType(file, allowedExtensions)) {
-        setStatus({ type: 'error', message: 'Only PDF, DOC, DOCX, JPG, JPEG, PNG files are allowed!' });
-        return;
-      }
-
-      setResumeFile(file);
+      setFile(file);
       setStatus({ type: '', message: '' });
     }
-  };
-
-  const triggerFileInput = () => {
-    fileInputRef.current.click();
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setStatus({ type: '', message: '' });
 
-    // Validate inputs
-    if (!validateEmail(formData.email)) {
+    // Client-side validations
+    if (!formData.full_name.trim()) {
+      setStatus({ type: 'error', message: 'Full Name is required!' });
+      return;
+    }
+    if (!formData.mobile_number.trim()) {
+      setStatus({ type: 'error', message: 'Mobile Number is required!' });
+      return;
+    }
+    if (formData.email && !validateEmail(formData.email)) {
       setStatus({ type: 'error', message: 'Please enter a valid email address!' });
       return;
     }
-    if (!validatePhone(formData.phone)) {
-      setStatus({ type: 'error', message: 'Please enter a valid phone number!' });
+    if (!formData.trade_category) {
+      setStatus({ type: 'error', message: 'Please select a Trade / Skill Category!' });
       return;
     }
-    if (!resumeFile) {
-      setStatus({ type: 'error', message: 'Please upload your resume/CV!' });
+    if (!cvFile) {
+      setStatus({ type: 'error', message: 'Please upload your CV / Resume!' });
+      return;
+    }
+    if (!formData.consent) {
+      setStatus({ type: 'error', message: 'You must confirm that your details are accurate.' });
       return;
     }
 
     setLoading(true);
-    
-    // Construct FormData object
+
     const submitData = new FormData();
-    submitData.append('name', formData.name);
-    submitData.append('email', formData.email);
-    submitData.append('phone', formData.phone);
-    submitData.append('job_position', formData.job_position);
-    submitData.append('experience', formData.experience);
-    submitData.append('message', formData.message);
-    submitData.append('resume', resumeFile);
+    Object.keys(formData).forEach((key) => {
+      submitData.append(key, formData[key]);
+    });
+
+    submitData.append('cv_document', cvFile);
+    if (passportFile) submitData.append('passport_document', passportFile);
+    if (expCertFile) submitData.append('experience_certificate', expCertFile);
+    if (otherDocFile) submitData.append('other_documents', otherDocFile);
 
     try {
       const res = await userService.submitApplication(submitData);
       if (res.success) {
-        setStatus({ type: 'success', message: res.message || 'Application submitted successfully! We will contact you soon.' });
-        // Reset form
-        setFormData({
-          name: '',
-          email: '',
-          phone: '',
-          job_position: '',
-          experience: '',
-          message: ''
+        setSubmittedData({
+          application_id: res.application_id,
+          full_name: formData.full_name,
+          trade_category: formData.trade_category,
+          mobile_number: formData.mobile_number,
+          email: formData.email,
+          submitted_at: new Date().toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })
         });
-        setResumeFile(null);
       } else {
         setStatus({ type: 'error', message: res.error || res.message || 'Failed to submit application. Please try again.' });
       }
     } catch (err) {
       console.error(err);
-      setStatus({ type: 'error', message: 'Something went wrong. Please check your connection and try again.' });
+      setStatus({ type: 'error', message: 'Connection or server error. Please try again.' });
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div>
-      {/* Hero Section */}
-      <section className="relative overflow-hidden text-white pt-32 pb-24 md:pt-40 md:pb-36 bg-cover bg-center" style={{ backgroundImage: "url('/images/hero_city_buildings.jpg')" }}>
-        <div className="absolute inset-0 bg-gradient-to-r from-slate-950/95 via-blue-950/90 to-blue-900/80 pointer-events-none" />
-        
-        <div className="absolute w-[300px] h-[300px] bg-amber-500/10 rounded-full -top-[100px] -right-[100px] pointer-events-none" />
-        <div className="absolute w-[200px] h-[200px] bg-amber-500/5 rounded-full -bottom-[50px] -left-[50px] pointer-events-none" />
-        
-        <div className="container mx-auto px-4 max-w-6xl relative z-10">
-          <div className="text-center animate-fade-in-up">
-            <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold mb-4 font-heading">Apply Now</h1>
-            <p className="text-xl text-blue-100 max-w-2xl mx-auto leading-relaxed">
-              Join our database of professionals and start your international career journey
-            </p>
+    <div style={{ background: 'var(--cream)', minHeight: '100vh' }}>
+      
+      {/* ── Page Banner Header ── */}
+      <section style={{ background: 'var(--slate)', padding: '70px 60px', position: 'relative', overflow: 'hidden' }} className="apply-banner">
+        <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 3, background: 'linear-gradient(to right, var(--gold), var(--cobalt), var(--gold))' }} />
+        <div style={{ maxWidth: 1000, margin: '0 auto', textAlign: 'center', color: '#fff' }}>
+          <div style={{ display: 'inline-flex', alignItems: 'center', gap: 8, padding: '5px 14px', borderRadius: 100, border: '1.5px solid rgba(201,168,76,0.3)', background: 'rgba(201,168,76,0.08)', fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: 11, fontWeight: 700, letterSpacing: '0.18em', textTransform: 'uppercase', color: 'var(--gold)', marginBottom: 16 }}>
+            International Candidate Registration
           </div>
+          <h1 style={{ fontFamily: "'Playfair Display', serif", fontSize: 'clamp(32px, 4.5vw, 56px)', fontWeight: 700, color: '#fff', lineHeight: 1.15, marginBottom: 12 }}>
+            Job Application <em style={{ color: 'var(--gold)', fontStyle: 'italic' }}>Portal</em>
+          </h1>
+          <p style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: 15, color: 'rgba(255,255,255,0.65)', maxWidth: 560, margin: '0 auto' }}>
+            Submit your profile directly to our MEA-licensed recruitment team for international project deployment.
+          </p>
         </div>
       </section>
 
-      {/* Main Form Content */}
-      <section className="py-16 px-4 bg-[#F8F9FA] scroll-fade-in">
-        <div className="container mx-auto max-w-6xl">
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            {/* Sidebar Benefits */}
-            <div className="lg:col-span-1">
-              <div className="sticky top-28 space-y-4">
-                <h3 className="text-2xl font-bold text-blue-900 mb-6 font-heading">Why Apply With Us?</h3>
-                
-                <div className="bg-white p-5 rounded-2xl border-l-4 border-amber-500 shadow-sm hover:translate-x-1 transition-all duration-300 scroll-scale-in">
-                  <h4 className="font-bold text-blue-900 mb-2 font-heading">Government Approved</h4>
-                  <p className="text-slate-600 text-xs leading-relaxed">Fully approved and registered by Ministry of External Affairs, Govt of India.</p>
+      {/* ── Main Section ── */}
+      <section style={{ padding: '60px 40px' }} className="apply-body">
+        <div style={{ maxWidth: 1100, margin: '0 auto' }}>
+          
+          {/* SUCCESS SCREEN */}
+          {submittedData ? (
+            <div style={{ background: '#fff', borderRadius: 18, border: '1.5px solid var(--fog)', padding: '48px 40px', boxShadow: '0 12px 40px rgba(0,0,0,0.06)', textAlign: 'center' }} className="animate-fade-in">
+              <div style={{ width: 72, height: 72, borderRadius: '50%', background: 'rgba(16,185,129,0.12)', border: '2px solid #10b981', color: '#10b981', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 24px', fontSize: 36 }}>
+                ✓
+              </div>
+              <h2 style={{ fontFamily: "'Playfair Display', serif", fontSize: 32, fontWeight: 700, color: 'var(--slate)', marginBottom: 8 }}>
+                Application Submitted Successfully
+              </h2>
+              <p style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: 15, color: 'var(--steel)', maxWidth: 600, margin: '0 auto 28px', lineHeight: 1.6 }}>
+                Thank you for applying. Our recruitment team will review your application and contact you if your profile matches an available opportunity.
+              </p>
+
+              {/* Reference Card */}
+              <div style={{ background: 'var(--mist)', border: '1.5px dashed var(--cobalt)', borderRadius: 14, padding: '24px 32px', maxWidth: 480, margin: '0 auto 36px', textAlign: 'left' }}>
+                <div style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: 11, fontWeight: 700, color: 'var(--steel)', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 4 }}>
+                  Application Reference ID
                 </div>
-                
-                <div className="bg-white p-5 rounded-2xl border-l-4 border-amber-500 shadow-sm hover:translate-x-1 transition-all duration-300 scroll-scale-in">
-                  <h4 className="font-bold text-blue-900 mb-2 font-heading">Quick Processing</h4>
-                  <p className="text-slate-600 text-xs leading-relaxed">Fast evaluation and visa document processing for all matching candidates.</p>
+                <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 24, fontWeight: 700, color: 'var(--cobalt)', marginBottom: 16 }}>
+                  {submittedData.application_id}
                 </div>
-                
-                <div className="bg-white p-5 rounded-2xl border-l-4 border-amber-500 shadow-sm hover:translate-x-1 transition-all duration-300 scroll-scale-in">
-                  <h4 className="font-bold text-blue-900 mb-2 font-heading">Expert Team</h4>
-                  <p className="text-slate-600 text-xs leading-relaxed">Your application is reviewed by experienced global manpower professionals.</p>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, fontSize: 13, borderTop: '1px solid var(--fog)', paddingTop: 14, color: 'var(--charcoal)' }}>
+                  <div><strong>Applicant:</strong> {submittedData.full_name}</div>
+                  <div><strong>Trade:</strong> {submittedData.trade_category}</div>
+                  <div><strong>Mobile:</strong> {submittedData.mobile_number}</div>
+                  <div><strong>Date:</strong> {submittedData.submitted_at}</div>
                 </div>
               </div>
-            </div>
 
-            {/* Form Section */}
-            <div className="lg:col-span-2 scroll-scale-in">
-              <div className="bg-white rounded-3xl shadow-xl overflow-hidden border border-slate-100">
-                <div className="bg-gradient-to-r from-[#e11d48] to-[#be123c] text-white p-8">
-                  <h2 className="text-3xl font-bold font-heading">Application Form</h2>
-                  <p className="text-amber-50 mt-1.5 text-sm">Fill in your details below to apply for placement opportunities</p>
+              <div style={{ display: 'flex', gap: 14, justifyContent: 'center', flexWrap: 'wrap' }}>
+                <Link to="/" style={{ padding: '13px 28px', background: 'var(--slate)', color: '#fff', fontFamily: "'Plus Jakarta Sans', sans-serif", fontWeight: 700, fontSize: 14, borderRadius: 10, textDecoration: 'none' }}>
+                  Back to Skills & Categories
+                </Link>
+                <button onClick={() => { setSubmittedData(null); setCvFile(null); setPassportFile(null); setExpCertFile(null); setOtherDocFile(null); }} style={{ padding: '13px 28px', background: 'transparent', border: '1.5px solid var(--slate)', color: 'var(--slate)', fontFamily: "'Plus Jakarta Sans', sans-serif", fontWeight: 700, fontSize: 14, borderRadius: 10, cursor: 'pointer' }}>
+                  Submit Another Application
+                </button>
+              </div>
+            </div>
+          ) : (
+            /* APPLICATION FORM */
+            <div style={{ background: '#fff', borderRadius: 20, border: '1.5px solid var(--fog)', overflow: 'hidden', boxShadow: '0 10px 30px rgba(0,0,0,0.04)' }}>
+              
+              {/* Form Title Strip */}
+              <div style={{ background: 'var(--slate)', padding: '24px 36px', color: '#fff', display: 'flex', alignItems: 'center', justify: 'space-between', flexWrap: 'wrap', gap: 12 }}>
+                <div>
+                  <h2 style={{ fontFamily: "'Playfair Display', serif", fontSize: 24, fontWeight: 700, color: '#fff', margin: 0 }}>
+                    Overseas Employment Application Form
+                  </h2>
+                  <p style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: 13, color: 'rgba(255,255,255,0.65)', margin: '4px 0 0 0' }}>
+                    Fields marked with <span style={{ color: 'var(--gold)' }}>*</span> are mandatory for profile evaluation.
+                  </p>
+                </div>
+                {formData.trade_category && (
+                  <div style={{ background: 'rgba(201,168,76,0.15)', border: '1px solid var(--gold)', borderRadius: 8, padding: '6px 14px', fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: 13, fontWeight: 700, color: 'var(--gold)' }}>
+                    Selected Trade: {formData.trade_category}
+                  </div>
+                )}
+              </div>
+
+              {/* Status Alert */}
+              {status.message && (
+                <div style={{ margin: '24px 36px 0', padding: '14px 20px', borderRadius: 10, background: status.type === 'error' ? '#fef2f2' : '#ecfdf5', border: `1.5px solid ${status.type === 'error' ? '#fca5a5' : '#a7f3d0'}`, color: status.type === 'error' ? '#991b1b' : '#065f46', fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: 14, fontWeight: 600 }}>
+                  {status.message}
+                </div>
+              )}
+
+              <form onSubmit={handleSubmit} style={{ padding: '36px' }}>
+                
+                {/* ═══════════════════════════════
+                    SECTION 1: PERSONAL INFORMATION
+                ═══════════════════════════════ */}
+                <div style={{ marginBottom: 36 }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 10, paddingBottom: 10, borderBottom: '2px solid var(--mist)', marginBottom: 20 }}>
+                    <span style={{ width: 24, height: 24, borderRadius: '50%', background: 'var(--cobalt)', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 12, fontWeight: 700 }}>1</span>
+                    <h3 style={{ fontFamily: "'Playfair Display', serif", fontSize: 18, fontWeight: 700, color: 'var(--slate)', margin: 0 }}>Personal Information</h3>
+                  </div>
+
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 18 }} className="form-grid-3">
+                    <div>
+                      <label style={labelStyle}>Full Name <span style={{ color: '#ef4444' }}>*</span></label>
+                      <input type="text" name="full_name" required value={formData.full_name} onChange={handleChange} placeholder="e.g. Rahul Sharma" style={inputStyle} />
+                    </div>
+
+                    <div>
+                      <label style={labelStyle}>Father's Name</label>
+                      <input type="text" name="father_name" value={formData.father_name} onChange={handleChange} placeholder="Father's Name" style={inputStyle} />
+                    </div>
+
+                    <div>
+                      <label style={labelStyle}>Date of Birth</label>
+                      <input type="date" name="date_of_birth" value={formData.date_of_birth} onChange={handleChange} style={inputStyle} />
+                    </div>
+
+                    <div>
+                      <label style={labelStyle}>Gender</label>
+                      <select name="gender" value={formData.gender} onChange={handleChange} style={inputStyle}>
+                        <option value="Male">Male</option>
+                        <option value="Female">Female</option>
+                        <option value="Other">Other</option>
+                      </select>
+                    </div>
+
+                    <div>
+                      <label style={labelStyle}>Mobile Number <span style={{ color: '#ef4444' }}>*</span></label>
+                      <input type="tel" name="mobile_number" required value={formData.mobile_number} onChange={handleChange} placeholder="+91 9876543210" style={inputStyle} />
+                    </div>
+
+                    <div>
+                      <label style={labelStyle}>WhatsApp Number</label>
+                      <input type="tel" name="whatsapp_number" value={formData.whatsapp_number} onChange={handleChange} placeholder="WhatsApp Number" style={inputStyle} />
+                    </div>
+
+                    <div>
+                      <label style={labelStyle}>Email Address</label>
+                      <input type="email" name="email" value={formData.email} onChange={handleChange} placeholder="name@example.com" style={inputStyle} />
+                    </div>
+
+                    <div>
+                      <label style={labelStyle}>Current City</label>
+                      <input type="text" name="current_city" value={formData.current_city} onChange={handleChange} placeholder="e.g. Patna / New Delhi" style={inputStyle} />
+                    </div>
+
+                    <div>
+                      <label style={labelStyle}>Current Country</label>
+                      <input type="text" name="current_country" value={formData.current_country} onChange={handleChange} placeholder="India" style={inputStyle} />
+                    </div>
+                  </div>
                 </div>
 
-                <div className="p-8">
-                  {status.message && (
-                    <div className={`p-5 rounded-2xl mb-6 border ${
-                      status.type === 'success' ? 'bg-emerald-50 text-emerald-800 border-emerald-200' : 'bg-red-50 text-red-800 border-red-200'
-                    }`}>
-                      <div className="flex items-center gap-3">
-                        {status.type === 'success' ? (
-                          <svg className="w-6 h-6 text-green-600 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                            <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd"/>
-                          </svg>
-                        ) : (
-                          <svg className="w-6 h-6 text-red-600 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                            <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd"/>
-                          </svg>
-                        )}
-                        <div>
-                          <p className="font-bold">{status.type === 'success' ? 'Success!' : 'Error'}</p>
-                          <p className="text-sm mt-0.5">{status.message}</p>
-                        </div>
-                      </div>
-                    </div>
-                  )}
+                {/* ═══════════════════════════════
+                    SECTION 2: PROFESSIONAL INFORMATION
+                ═══════════════════════════════ */}
+                <div style={{ marginBottom: 36 }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 10, paddingBottom: 10, borderBottom: '2px solid var(--mist)', marginBottom: 20 }}>
+                    <span style={{ width: 24, height: 24, borderRadius: '50%', background: 'var(--cobalt)', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 12, fontWeight: 700 }}>2</span>
+                    <h3 style={{ fontFamily: "'Playfair Display', serif", fontSize: 18, fontWeight: 700, color: 'var(--slate)', margin: 0 }}>Professional Information</h3>
+                  </div>
 
-                  <form onSubmit={handleSubmit} className="space-y-6">
-                    {/* Name */}
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 18 }} className="form-grid-3">
                     <div>
-                      <label className="block text-sm font-bold text-blue-900 mb-2 font-heading">Full Name <span className="text-red-500">*</span></label>
-                      <input 
-                        type="text" 
-                        name="name" 
-                        required 
-                        value={formData.name}
-                        onChange={handleChange}
-                        className="w-full px-4 py-3 border-2 border-slate-200 rounded-xl focus:border-amber-500 focus:outline-none"
-                        placeholder="Enter your full name" 
-                      />
+                      <label style={labelStyle}>Selected Trade / Skill Category <span style={{ color: '#ef4444' }}>*</span></label>
+                      <select name="trade_category" required value={formData.trade_category} onChange={handleChange} style={{ ...inputStyle, background: '#f8fafc', fontWeight: 700, color: 'var(--cobalt)' }}>
+                        <option value="">-- Select Trade --</option>
+                        {SKILL_CATEGORIES_LIST.map((cat, idx) => (
+                          <option key={idx} value={cat}>{cat}</option>
+                        ))}
+                      </select>
                     </div>
 
-                    {/* Email */}
                     <div>
-                      <label className="block text-sm font-bold text-blue-900 mb-2 font-heading">Email Address <span className="text-red-500">*</span></label>
-                      <input 
-                        type="email" 
-                        name="email" 
-                        required 
-                        value={formData.email}
-                        onChange={handleChange}
-                        className="w-full px-4 py-3 border-2 border-slate-200 rounded-xl focus:border-amber-500 focus:outline-none"
-                        placeholder="Enter your email" 
-                      />
+                      <label style={labelStyle}>Total Work Experience</label>
+                      <input type="text" name="total_experience" value={formData.total_experience} onChange={handleChange} placeholder="e.g. 5 Years" style={inputStyle} />
                     </div>
 
-                    {/* Phone */}
                     <div>
-                      <label className="block text-sm font-bold text-blue-900 mb-2 font-heading">Phone Number <span className="text-red-500">*</span></label>
-                      <input 
-                        type="tel" 
-                        name="phone" 
-                        required 
-                        value={formData.phone}
-                        onChange={handleChange}
-                        className="w-full px-4 py-3 border-2 border-slate-200 rounded-xl focus:border-amber-500 focus:outline-none"
-                        placeholder="Enter your phone number" 
-                      />
+                      <label style={labelStyle}>Relevant Experience in Trade</label>
+                      <input type="text" name="relevant_experience" value={formData.relevant_experience} onChange={handleChange} placeholder="e.g. 3 Years Gulf Experience" style={inputStyle} />
                     </div>
 
-                    {/* Job Position */}
                     <div>
-                      <label className="block text-sm font-bold text-blue-900 mb-2 font-heading">Job Position <span className="text-red-500">*</span></label>
-                      <input 
-                        type="text" 
-                        name="job_position" 
-                        required 
-                        value={formData.job_position}
-                        onChange={handleChange}
-                        className="w-full px-4 py-3 border-2 border-slate-200 rounded-xl focus:border-amber-500 focus:outline-none"
-                        placeholder="e.g., HVAC Engineer, Nurse, IT Professional" 
-                      />
+                      <label style={labelStyle}>Current Job Title</label>
+                      <input type="text" name="current_job_title" value={formData.current_job_title} onChange={handleChange} placeholder="e.g. Senior Welder / Mason" style={inputStyle} />
                     </div>
 
-                    {/* Experience */}
                     <div>
-                      <label className="block text-sm font-bold text-blue-900 mb-2 font-heading">Experience <span className="text-red-500">*</span></label>
-                      <input 
-                        type="text" 
-                        name="experience" 
-                        required 
-                        value={formData.experience}
-                        onChange={handleChange}
-                        className="w-full px-4 py-3 border-2 border-slate-200 rounded-xl focus:border-amber-500 focus:outline-none"
-                        placeholder="e.g., 5 years in Healthcare, 2 years in Construction" 
-                      />
+                      <label style={labelStyle}>Previous Company / Employer</label>
+                      <input type="text" name="previous_company" value={formData.previous_company} onChange={handleChange} placeholder="Company Name" style={inputStyle} />
                     </div>
 
-                    {/* Message */}
                     <div>
-                      <label className="block text-sm font-bold text-blue-900 mb-2 font-heading">Message (Optional)</label>
-                      <textarea 
-                        name="message" 
-                        rows="4"
-                        value={formData.message}
-                        onChange={handleChange}
-                        className="w-full px-4 py-3 border-2 border-slate-200 rounded-xl focus:border-amber-500 focus:outline-none resize-none"
-                        placeholder="Tell us about yourself and why you are applying..."
-                      />
+                      <label style={labelStyle}>Preferred Country</label>
+                      <select name="preferred_country" value={formData.preferred_country} onChange={handleChange} style={inputStyle}>
+                        {PREFERRED_COUNTRIES.map((c, i) => (
+                          <option key={i} value={c}>{c}</option>
+                        ))}
+                      </select>
                     </div>
 
-                    {/* Resume Upload Box */}
                     <div>
-                      <label className="block text-sm font-bold text-blue-900 mb-2 font-heading">Upload Resume/CV <span className="text-red-500">*</span></label>
-                      <div 
-                        onDragEnter={handleDrag}
-                        onDragOver={handleDrag}
-                        onDragLeave={handleDrag}
-                        onDrop={handleDrop}
-                        onClick={triggerFileInput}
-                        className={`border-2 border-dashed rounded-2xl p-8 text-center cursor-pointer transition-all duration-300 ${
-                          dragActive 
-                            ? 'border-blue-700 bg-blue-50/50' 
-                            : 'border-amber-500 bg-amber-50/10 hover:border-[#be123c] hover:bg-amber-50/20'
-                        }`}
-                      >
-                        <input 
-                          type="file" 
-                          ref={fileInputRef}
-                          id="resume" 
-                          required 
-                          accept=".pdf,.doc,.docx,.jpg,.jpeg,.png"
-                          onChange={handleFileChange}
-                          className="hidden"
-                        />
-                        
-                        <svg className="w-12 h-12 mx-auto text-[#e11d48] mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4v16m8-8H4"></path>
-                        </svg>
-                        
-                        {resumeFile ? (
-                          <div>
-                            <p className="text-slate-800 font-bold">Selected File:</p>
-                            <p className="text-amber-600 font-bold mt-1 break-all">{resumeFile.name}</p>
-                            <p className="text-slate-400 text-xs mt-1">{(resumeFile.size / (1024 * 1024)).toFixed(2)} MB</p>
-                          </div>
-                        ) : (
-                          <div>
-                            <p className="text-slate-700 font-bold">Click to upload or drag and drop</p>
-                            <p className="text-xs text-slate-500 mt-1">PDF, DOC, DOCX, JPG, PNG (Max 5MB)</p>
-                          </div>
-                        )}
-                      </div>
+                      <label style={labelStyle}>Expected Salary</label>
+                      <input type="text" name="expected_salary" value={formData.expected_salary} onChange={handleChange} placeholder="e.g. 2500 AED / 3000 SAR" style={inputStyle} />
+                    </div>
+                  </div>
+                </div>
+
+                {/* ═══════════════════════════════
+                    SECTION 3: SKILLS & CERTIFICATIONS
+                ═══════════════════════════════ */}
+                <div style={{ marginBottom: 36 }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 10, paddingBottom: 10, borderBottom: '2px solid var(--mist)', marginBottom: 20 }}>
+                    <span style={{ width: 24, height: 24, borderRadius: '50%', background: 'var(--cobalt)', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 12, fontWeight: 700 }}>3</span>
+                    <h3 style={{ fontFamily: "'Playfair Display', serif", fontSize: 18, fontWeight: 700, color: 'var(--slate)', margin: 0 }}>Skills & Certifications</h3>
+                  </div>
+
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 18 }} className="form-grid-3">
+                    <div>
+                      <label style={labelStyle}>Primary Skill</label>
+                      <input type="text" name="primary_skill" value={formData.primary_skill} onChange={handleChange} placeholder="e.g. 6G TIG & MIG Welding" style={inputStyle} />
                     </div>
 
-                    {/* Submit Button */}
-                    <div className="pt-6">
-                      <button 
-                        type="submit" 
-                        disabled={loading}
-                        className="w-full py-4 bg-gradient-to-r from-[#e11d48] to-[#be123c] hover:from-[#be123c] hover:to-[#9f1239] text-white text-sm font-bold rounded-xl shadow-lg active:scale-[0.98] transition-all inline-flex items-center justify-center gap-2 disabled:opacity-50 disabled:pointer-events-none"
-                      >
-                        <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                          <path fillRule="evenodd" d="M5 9V7a1 1 0 011-1h8a1 1 0 011 1v2a1 1 0 11-2 0V8H7v1a1 1 0 11-2 0zm12 2a1 1 0 100-2h-1.586l1.293-1.293a1 1 0 10-1.414-1.414L13 7.586V6a1 1 0 10-2 0v3a1 1 0 001 1h3zM5 15v2a1 1 0 001 1h8a1 1 0 001-1v-2a1 1 0 112 0v2a3 3 0 01-3 3H6a3 3 0 01-3-3v-2a1 1 0 112 0z" clipRule="evenodd"/>
-                        </svg>
-                        {loading ? 'Submitting Application...' : 'Submit Application'}
+                    <div>
+                      <label style={labelStyle}>Additional Skills</label>
+                      <input type="text" name="additional_skills" value={formData.additional_skills} onChange={handleChange} placeholder="e.g. Blueprint reading, Pipefitting" style={inputStyle} />
+                    </div>
+
+                    <div>
+                      <label style={labelStyle}>Certifications / Trade Test Certificate</label>
+                      <input type="text" name="certifications" value={formData.certifications} onChange={handleChange} placeholder="e.g. ITI, IOSH, AWS Certified" style={inputStyle} />
+                    </div>
+                  </div>
+                </div>
+
+                {/* ═══════════════════════════════
+                    SECTION 4: PASSPORT & DOCUMENT UPLOADS
+                ═══════════════════════════════ */}
+                <div style={{ marginBottom: 36 }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 10, paddingBottom: 10, borderBottom: '2px solid var(--mist)', marginBottom: 20 }}>
+                    <span style={{ width: 24, height: 24, borderRadius: '50%', background: 'var(--cobalt)', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 12, fontWeight: 700 }}>4</span>
+                    <h3 style={{ fontFamily: "'Playfair Display', serif", fontSize: 18, fontWeight: 700, color: 'var(--slate)', margin: 0 }}>Passport & Documents Upload</h3>
+                  </div>
+
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 18, marginBottom: 20 }} className="form-grid-2">
+                    <div>
+                      <label style={labelStyle}>Passport Number</label>
+                      <input type="text" name="passport_number" value={formData.passport_number} onChange={handleChange} placeholder="e.g. Z1234567" style={inputStyle} />
+                    </div>
+
+                    <div>
+                      <label style={labelStyle}>Passport Expiry Date</label>
+                      <input type="date" name="passport_expiry" value={formData.passport_expiry} onChange={handleChange} style={inputStyle} />
+                    </div>
+                  </div>
+
+                  {/* Upload Cards Grid */}
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 16 }} className="form-grid-2">
+                    
+                    {/* CV Upload */}
+                    <div style={uploadCardStyle}>
+                      <label style={labelStyle}>Upload CV / Resume <span style={{ color: '#ef4444' }}>*</span></label>
+                      <input type="file" ref={cvInputRef} accept=".pdf,.doc,.docx,.jpg,.jpeg,.png" style={{ display: 'none' }} onChange={(e) => handleFileSelect(e, setCvFile, 'CV / Resume')} />
+                      <button type="button" onClick={() => cvInputRef.current.click()} style={uploadBtnStyle}>
+                        📄 {cvFile ? cvFile.name : 'Choose CV File (PDF/DOC/JPG)'}
                       </button>
+                      <span style={uploadHelpStyle}>{cvFile ? `Selected: ${(cvFile.size / 1024 / 1024).toFixed(2)} MB` : 'Max 5MB. PDF, DOCX, JPG'}</span>
                     </div>
-                  </form>
-                </div>
-              </div>
-            </div>
 
-          </div>
+                    {/* Passport Upload */}
+                    <div style={uploadCardStyle}>
+                      <label style={labelStyle}>Upload Passport Copy</label>
+                      <input type="file" ref={passportInputRef} accept=".pdf,.doc,.docx,.jpg,.jpeg,.png" style={{ display: 'none' }} onChange={(e) => handleFileSelect(e, setPassportFile, 'Passport Document')} />
+                      <button type="button" onClick={() => passportInputRef.current.click()} style={uploadBtnStyle}>
+                        🛂 {passportFile ? passportFile.name : 'Choose Passport File'}
+                      </button>
+                      <span style={uploadHelpStyle}>{passportFile ? `Selected: ${(passportFile.size / 1024 / 1024).toFixed(2)} MB` : 'Front & Back Page Copy'}</span>
+                    </div>
+
+                    {/* Experience Certificate */}
+                    <div style={uploadCardStyle}>
+                      <label style={labelStyle}>Upload Experience Certificate</label>
+                      <input type="file" ref={expCertInputRef} accept=".pdf,.doc,.docx,.jpg,.jpeg,.png" style={{ display: 'none' }} onChange={(e) => handleFileSelect(e, setExpCertFile, 'Experience Certificate')} />
+                      <button type="button" onClick={() => expCertInputRef.current.click()} style={uploadBtnStyle}>
+                        🏆 {expCertFile ? expCertFile.name : 'Choose Experience Cert'}
+                      </button>
+                      <span style={uploadHelpStyle}>{expCertFile ? `Selected: ${(expCertFile.size / 1024 / 1024).toFixed(2)} MB` : 'Previous Service Certificates'}</span>
+                    </div>
+
+                    {/* Other Documents */}
+                    <div style={uploadCardStyle}>
+                      <label style={labelStyle}>Upload Other Documents</label>
+                      <input type="file" ref={otherDocInputRef} accept=".pdf,.doc,.docx,.jpg,.jpeg,.png" style={{ display: 'none' }} onChange={(e) => handleFileSelect(e, setOtherDocFile, 'Other Document')} />
+                      <button type="button" onClick={() => otherDocInputRef.current.click()} style={uploadBtnStyle}>
+                        📁 {otherDocFile ? otherDocFile.name : 'Choose Other Document'}
+                      </button>
+                      <span style={uploadHelpStyle}>{otherDocFile ? `Selected: ${(otherDocFile.size / 1024 / 1024).toFixed(2)} MB` : 'Driving License, Trade Certs, etc.'}</span>
+                    </div>
+
+                  </div>
+                </div>
+
+                {/* ═══════════════════════════════
+                    SECTION 5: ADDITIONAL & CONSENT
+                ═══════════════════════════════ */}
+                <div style={{ marginBottom: 36 }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 10, paddingBottom: 10, borderBottom: '2px solid var(--mist)', marginBottom: 20 }}>
+                    <span style={{ width: 24, height: 24, borderRadius: '50%', background: 'var(--cobalt)', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 12, fontWeight: 700 }}>5</span>
+                    <h3 style={{ fontFamily: "'Playfair Display', serif", fontSize: 18, fontWeight: 700, color: 'var(--slate)', margin: 0 }}>Additional Information & Declaration</h3>
+                  </div>
+
+                  <div style={{ marginBottom: 20 }}>
+                    <label style={labelStyle}>Message / Additional Details</label>
+                    <textarea name="message" rows="3" value={formData.message} onChange={handleChange} placeholder="Provide any additional details about your availability, trade testing, or job preferences..." style={{ ...inputStyle, resize: 'vertical' }} />
+                  </div>
+
+                  <div style={{ background: 'var(--mist)', border: '1.5px solid var(--fog)', borderRadius: 10, padding: '16px 20px', display: 'flex', alignItems: 'flex-start', gap: 12 }}>
+                    <input type="checkbox" name="consent" id="consent" checked={formData.consent} onChange={handleChange} style={{ marginTop: 3, cursor: 'pointer', width: 18, height: 18 }} />
+                    <label htmlFor="consent" style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: 13, color: 'var(--charcoal)', cursor: 'pointer', lineHeight: 1.5 }}>
+                      I hereby declare and confirm that all details, qualifications, work experience, and uploaded document certificates provided in this application are genuine, correct, and complete to the best of my knowledge. <span style={{ color: '#ef4444' }}>*</span>
+                    </label>
+                  </div>
+                </div>
+
+                {/* Submit Button */}
+                <div style={{ textAlign: 'right', paddingTop: 10 }}>
+                  <button
+                    type="submit"
+                    disabled={loading}
+                    style={{
+                      padding: '16px 42px',
+                      background: 'var(--slate)',
+                      color: '#fff',
+                      fontFamily: "'Plus Jakarta Sans', sans-serif",
+                      fontWeight: 700,
+                      fontSize: 15,
+                      borderRadius: 12,
+                      border: 'none',
+                      cursor: loading ? 'not-allowed' : 'pointer',
+                      opacity: loading ? 0.7 : 1,
+                      boxShadow: '0 8px 24px rgba(15,26,53,0.2)',
+                      transition: 'all 0.25s ease',
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: 10
+                    }}
+                  >
+                    {loading ? (
+                      <>
+                        <span className="inline-block animate-spin">⏳</span> Submitting Application...
+                      </>
+                    ) : (
+                      <>Submit Application →</>
+                    )}
+                  </button>
+                </div>
+
+              </form>
+            </div>
+          )}
+
         </div>
       </section>
+
+      <style>{`
+        .apply-banner { padding: 70px 60px; }
+        .apply-body { padding: 60px 40px; }
+        .form-grid-3 { grid-template-columns: repeat(3, 1fr); }
+        .form-grid-2 { grid-template-columns: repeat(2, 1fr); }
+        @media (max-width: 960px) {
+          .apply-banner { padding: 50px 24px !important; }
+          .apply-body { padding: 40px 16px !important; }
+          .form-grid-3 { grid-template-columns: 1fr !important; }
+          .form-grid-2 { grid-template-columns: 1fr !important; }
+        }
+      `}</style>
     </div>
   );
+};
+
+const labelStyle = {
+  display: 'block',
+  fontFamily: "'Plus Jakarta Sans', sans-serif",
+  fontSize: 12.5,
+  fontWeight: 700,
+  color: 'var(--slate)',
+  marginBottom: 6,
+  textTransform: 'uppercase',
+  letterSpacing: '0.04em'
+};
+
+const inputStyle = {
+  width: '100%',
+  padding: '11px 14px',
+  borderRadius: 8,
+  border: '1.5px solid var(--fog)',
+  fontFamily: "'Plus Jakarta Sans', sans-serif",
+  fontSize: 14,
+  color: 'var(--slate)',
+  background: '#fff',
+  outline: 'none',
+  boxSizing: 'border-box'
+};
+
+const uploadCardStyle = {
+  background: 'var(--mist)',
+  border: '1.5px solid var(--fog)',
+  borderRadius: 10,
+  padding: '14px 18px',
+  boxSizing: 'border-box'
+};
+
+const uploadBtnStyle = {
+  width: '100%',
+  padding: '10px 14px',
+  background: '#fff',
+  border: '1.5px dashed var(--cobalt)',
+  borderRadius: 8,
+  fontFamily: "'Plus Jakarta Sans', sans-serif",
+  fontSize: 13,
+  fontWeight: 600,
+  color: 'var(--cobalt)',
+  cursor: 'pointer',
+  textAlign: 'left',
+  whiteSpace: 'nowrap',
+  overflow: 'hidden',
+  textOverflow: 'ellipsis'
+};
+
+const uploadHelpStyle = {
+  display: 'block',
+  fontFamily: "'Plus Jakarta Sans', sans-serif",
+  fontSize: 11,
+  color: 'var(--steel)',
+  marginTop: 6
 };
 
 export default ApplyJob;
