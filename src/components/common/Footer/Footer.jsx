@@ -1,17 +1,19 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { COMPANY_NAME, LICENSE_NO, RA_NO, CONTACT_INFO, SOCIAL_LINKS, ESTABLISHED_YEAR } from '../../../utils/constants';
+import { useLanguage } from '../../../context/LanguageContext';
 
 export const Footer = () => {
+  const { t } = useLanguage();
   const year = new Date().getFullYear();
 
   const quickLinks = [
-    { path: '/', label: 'Home' },
-    { path: '/about', label: 'About Us' },
-    { path: '/services', label: 'Services' },
-    { path: '/process', label: 'Process' },
-    { path: '/why-us', label: 'Why Choose Us' },
-    { path: '/contact-info', label: 'Contact' },
+    { path: '/', label: t('nav_home') },
+    { path: '/about', label: t('nav_about') },
+    { path: '/services', label: t('nav_services') },
+    { path: '/process', label: t('nav_process') },
+    { path: '/why-us', label: t('nav_why_us') },
+    { path: '/contact-info', label: t('nav_contact') },
   ];
 
   const serviceLinks = [
@@ -171,7 +173,7 @@ export const Footer = () => {
                 borderBottom: '1px solid rgba(255,255,255,0.08)',
               }}
             >
-              Quick Links
+              {t('quick_links')}
             </h4>
             <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: 2 }}>
               {quickLinks.map((link) => (
@@ -223,7 +225,7 @@ export const Footer = () => {
                 borderBottom: '1px solid rgba(255,255,255,0.08)',
               }}
             >
-              Our Services
+              {t('nav_services')}
             </h4>
             <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: 2 }}>
               {serviceLinks.map((service) => (
@@ -275,7 +277,7 @@ export const Footer = () => {
                 borderBottom: '1px solid rgba(255,255,255,0.08)',
               }}
             >
-              Contact Us
+              {t('contact_us')}
             </h4>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
               {/* Address */}
@@ -373,7 +375,7 @@ export const Footer = () => {
           }}
         >
           <p style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: 12.5, color: 'rgba(255,255,255,0.3)' }}>
-            © {year} <Link to="/" style={{ color: 'rgba(255,255,255,0.5)', textDecoration: 'none', fontWeight: 600 }}>{COMPANY_NAME}</Link>. All Rights Reserved.
+            © {year} <Link to="/" style={{ color: 'rgba(255,255,255,0.5)', textDecoration: 'none', fontWeight: 600 }}>{COMPANY_NAME}</Link>. {t('all_rights_reserved')}.
           </p>
 
           {/* License pill */}

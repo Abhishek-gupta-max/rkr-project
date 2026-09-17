@@ -3,6 +3,7 @@ import { useLocation, useNavigate, Link } from 'react-router-dom';
 import userService from '../../services/userService';
 import { validateEmail, validatePhone, validateFileSize, validateFileType } from '../../utils/validators';
 import useScrollAnimation from '../../hooks/useScrollAnimation';
+import { useLanguage } from '../../context/LanguageContext';
 
 const SKILL_CATEGORIES_LIST = [
   'Civil Engineers', 'Electrical Engineers', 'Mechanical Engineers',
@@ -26,6 +27,7 @@ const PREFERRED_COUNTRIES = [
 
 export const ApplyJob = () => {
   useScrollAnimation();
+  const { t } = useLanguage();
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -117,19 +119,19 @@ export const ApplyJob = () => {
 
     // Client-side validations
     if (!formData.full_name.trim()) {
-      setStatus({ type: 'error', message: 'Full Name is required!' });
+      setStatus({ type: 'error', message: t('val_name_req') || 'Full Name is required!' });
       return;
     }
     if (!formData.mobile_number.trim()) {
-      setStatus({ type: 'error', message: 'Mobile Number is required!' });
+      setStatus({ type: 'error', message: t('val_mobile_req') || 'Mobile Number is required!' });
       return;
     }
     if (formData.email && !validateEmail(formData.email)) {
-      setStatus({ type: 'error', message: 'Please enter a valid email address!' });
+      setStatus({ type: 'error', message: t('val_email_invalid') || 'Please enter a valid email address!' });
       return;
     }
     if (!formData.trade_category) {
-      setStatus({ type: 'error', message: 'Please select a Trade / Skill Category!' });
+      setStatus({ type: 'error', message: t('val_trade_req') || 'Please select a Trade / Skill Category!' });
       return;
     }
     if (!cvFile) {
@@ -186,10 +188,10 @@ export const ApplyJob = () => {
             International Candidate Registration
           </div>
           <h1 style={{ fontFamily: "'Playfair Display', serif", fontSize: 'clamp(32px, 4.5vw, 56px)', fontWeight: 700, color: '#fff', lineHeight: 1.15, marginBottom: 12 }}>
-            Job Application <em style={{ color: 'var(--gold)', fontStyle: 'italic' }}>Portal</em>
+            {t('apply_for_job')}
           </h1>
           <p style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: 15, color: 'rgba(255,255,255,0.65)', maxWidth: 560, margin: '0 auto' }}>
-            Submit your profile directly to our MEA-licensed recruitment team for international project deployment.
+            {t('apply_subtitle')}
           </p>
         </div>
       </section>
@@ -205,16 +207,16 @@ export const ApplyJob = () => {
                 ✓
               </div>
               <h2 style={{ fontFamily: "'Playfair Display', serif", fontSize: 32, fontWeight: 700, color: 'var(--slate)', marginBottom: 8 }}>
-                Application Submitted Successfully
+                {t('app_success_title')}
               </h2>
               <p style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: 15, color: 'var(--steel)', maxWidth: 600, margin: '0 auto 28px', lineHeight: 1.6 }}>
-                Thank you for applying. Our recruitment team will review your application and contact you if your profile matches an available opportunity.
+                {t('app_success_desc')}
               </p>
 
               {/* Reference Card */}
               <div style={{ background: 'var(--mist)', border: '1.5px dashed var(--cobalt)', borderRadius: 14, padding: '24px 32px', maxWidth: 480, margin: '0 auto 36px', textAlign: 'left' }}>
                 <div style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: 11, fontWeight: 700, color: 'var(--steel)', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 4 }}>
-                  Application Reference ID
+                  {t('app_id')}
                 </div>
                 <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 24, fontWeight: 700, color: 'var(--cobalt)', marginBottom: 16 }}>
                   {submittedData.application_id}
@@ -229,10 +231,10 @@ export const ApplyJob = () => {
 
               <div style={{ display: 'flex', gap: 14, justifyContent: 'center', flexWrap: 'wrap' }}>
                 <Link to="/" style={{ padding: '13px 28px', background: 'var(--slate)', color: '#fff', fontFamily: "'Plus Jakarta Sans', sans-serif", fontWeight: 700, fontSize: 14, borderRadius: 10, textDecoration: 'none' }}>
-                  Back to Skills & Categories
+                  {t('back_to_skills')}
                 </Link>
                 <button onClick={() => { setSubmittedData(null); setCvFile(null); setPassportFile(null); setExpCertFile(null); setOtherDocFile(null); }} style={{ padding: '13px 28px', background: 'transparent', border: '1.5px solid var(--slate)', color: 'var(--slate)', fontFamily: "'Plus Jakarta Sans', sans-serif", fontWeight: 700, fontSize: 14, borderRadius: 10, cursor: 'pointer' }}>
-                  Submit Another Application
+                  {t('submit_another')}
                 </button>
               </div>
             </div>
@@ -244,7 +246,7 @@ export const ApplyJob = () => {
               <div style={{ background: 'var(--slate)', padding: '24px 36px', color: '#fff', display: 'flex', alignItems: 'center', justify: 'space-between', flexWrap: 'wrap', gap: 12 }}>
                 <div>
                   <h2 style={{ fontFamily: "'Playfair Display', serif", fontSize: 24, fontWeight: 700, color: '#fff', margin: 0 }}>
-                    Overseas Employment Application Form
+                    {t('apply_for_job')}
                   </h2>
                   <p style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: 13, color: 'rgba(255,255,255,0.65)', margin: '4px 0 0 0' }}>
                     Fields marked with <span style={{ color: 'var(--gold)' }}>*</span> are mandatory for profile evaluation.
@@ -252,7 +254,7 @@ export const ApplyJob = () => {
                 </div>
                 {formData.trade_category && (
                   <div style={{ background: 'rgba(201,168,76,0.15)', border: '1px solid var(--gold)', borderRadius: 8, padding: '6px 14px', fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: 13, fontWeight: 700, color: 'var(--gold)' }}>
-                    Selected Trade: {formData.trade_category}
+                    {t('selected_trade')}: {formData.trade_category}
                   </div>
                 )}
               </div>
@@ -266,33 +268,31 @@ export const ApplyJob = () => {
 
               <form onSubmit={handleSubmit} style={{ padding: '36px' }}>
                 
-                {/* ═══════════════════════════════
-                    SECTION 1: PERSONAL INFORMATION
-                ═══════════════════════════════ */}
+                {/* SECTION 1: PERSONAL INFORMATION */}
                 <div style={{ marginBottom: 36 }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 10, paddingBottom: 10, borderBottom: '2px solid var(--mist)', marginBottom: 20 }}>
                     <span style={{ width: 24, height: 24, borderRadius: '50%', background: 'var(--cobalt)', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 12, fontWeight: 700 }}>1</span>
-                    <h3 style={{ fontFamily: "'Playfair Display', serif", fontSize: 18, fontWeight: 700, color: 'var(--slate)', margin: 0 }}>Personal Information</h3>
+                    <h3 style={{ fontFamily: "'Playfair Display', serif", fontSize: 18, fontWeight: 700, color: 'var(--slate)', margin: 0 }}>{t('personal_info')}</h3>
                   </div>
 
                   <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 18 }} className="form-grid-3">
                     <div>
-                      <label style={labelStyle}>Full Name <span style={{ color: '#ef4444' }}>*</span></label>
+                      <label style={labelStyle}>{t('full_name')} <span style={{ color: '#ef4444' }}>*</span></label>
                       <input type="text" name="full_name" required value={formData.full_name} onChange={handleChange} placeholder="e.g. Rahul Sharma" style={inputStyle} />
                     </div>
 
                     <div>
-                      <label style={labelStyle}>Father's Name</label>
-                      <input type="text" name="father_name" value={formData.father_name} onChange={handleChange} placeholder="Father's Name" style={inputStyle} />
+                      <label style={labelStyle}>{t('father_name')}</label>
+                      <input type="text" name="father_name" value={formData.father_name} onChange={handleChange} placeholder={t('father_name')} style={inputStyle} />
                     </div>
 
                     <div>
-                      <label style={labelStyle}>Date of Birth</label>
+                      <label style={labelStyle}>{t('dob')}</label>
                       <input type="date" name="date_of_birth" value={formData.date_of_birth} onChange={handleChange} style={inputStyle} />
                     </div>
 
                     <div>
-                      <label style={labelStyle}>Gender</label>
+                      <label style={labelStyle}>{t('gender')}</label>
                       <select name="gender" value={formData.gender} onChange={handleChange} style={inputStyle}>
                         <option value="Male">Male</option>
                         <option value="Female">Female</option>
@@ -301,44 +301,42 @@ export const ApplyJob = () => {
                     </div>
 
                     <div>
-                      <label style={labelStyle}>Mobile Number <span style={{ color: '#ef4444' }}>*</span></label>
+                      <label style={labelStyle}>{t('mobile_number')} <span style={{ color: '#ef4444' }}>*</span></label>
                       <input type="tel" name="mobile_number" required value={formData.mobile_number} onChange={handleChange} placeholder="+91 9876543210" style={inputStyle} />
                     </div>
 
                     <div>
-                      <label style={labelStyle}>WhatsApp Number</label>
-                      <input type="tel" name="whatsapp_number" value={formData.whatsapp_number} onChange={handleChange} placeholder="WhatsApp Number" style={inputStyle} />
+                      <label style={labelStyle}>{t('whatsapp_number')}</label>
+                      <input type="tel" name="whatsapp_number" value={formData.whatsapp_number} onChange={handleChange} placeholder={t('whatsapp_number')} style={inputStyle} />
                     </div>
 
                     <div>
-                      <label style={labelStyle}>Email Address</label>
+                      <label style={labelStyle}>{t('email_address')}</label>
                       <input type="email" name="email" value={formData.email} onChange={handleChange} placeholder="name@example.com" style={inputStyle} />
                     </div>
 
                     <div>
-                      <label style={labelStyle}>Current City</label>
+                      <label style={labelStyle}>{t('current_city')}</label>
                       <input type="text" name="current_city" value={formData.current_city} onChange={handleChange} placeholder="e.g. Patna / New Delhi" style={inputStyle} />
                     </div>
 
                     <div>
-                      <label style={labelStyle}>Current Country</label>
+                      <label style={labelStyle}>{t('current_country')}</label>
                       <input type="text" name="current_country" value={formData.current_country} onChange={handleChange} placeholder="India" style={inputStyle} />
                     </div>
                   </div>
                 </div>
 
-                {/* ═══════════════════════════════
-                    SECTION 2: PROFESSIONAL INFORMATION
-                ═══════════════════════════════ */}
+                {/* SECTION 2: PROFESSIONAL INFORMATION */}
                 <div style={{ marginBottom: 36 }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 10, paddingBottom: 10, borderBottom: '2px solid var(--mist)', marginBottom: 20 }}>
                     <span style={{ width: 24, height: 24, borderRadius: '50%', background: 'var(--cobalt)', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 12, fontWeight: 700 }}>2</span>
-                    <h3 style={{ fontFamily: "'Playfair Display', serif", fontSize: 18, fontWeight: 700, color: 'var(--slate)', margin: 0 }}>Professional Information</h3>
+                    <h3 style={{ fontFamily: "'Playfair Display', serif", fontSize: 18, fontWeight: 700, color: 'var(--slate)', margin: 0 }}>{t('professional_info')}</h3>
                   </div>
 
                   <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 18 }} className="form-grid-3">
                     <div>
-                      <label style={labelStyle}>Selected Trade / Skill Category <span style={{ color: '#ef4444' }}>*</span></label>
+                      <label style={labelStyle}>{t('selected_trade')} <span style={{ color: '#ef4444' }}>*</span></label>
                       <select name="trade_category" required value={formData.trade_category} onChange={handleChange} style={{ ...inputStyle, background: '#f8fafc', fontWeight: 700, color: 'var(--cobalt)' }}>
                         <option value="">-- Select Trade --</option>
                         {SKILL_CATEGORIES_LIST.map((cat, idx) => (
@@ -348,27 +346,27 @@ export const ApplyJob = () => {
                     </div>
 
                     <div>
-                      <label style={labelStyle}>Total Work Experience</label>
+                      <label style={labelStyle}>{t('total_experience')}</label>
                       <input type="text" name="total_experience" value={formData.total_experience} onChange={handleChange} placeholder="e.g. 5 Years" style={inputStyle} />
                     </div>
 
                     <div>
-                      <label style={labelStyle}>Relevant Experience in Trade</label>
+                      <label style={labelStyle}>{t('relevant_experience')}</label>
                       <input type="text" name="relevant_experience" value={formData.relevant_experience} onChange={handleChange} placeholder="e.g. 3 Years Gulf Experience" style={inputStyle} />
                     </div>
 
                     <div>
-                      <label style={labelStyle}>Current Job Title</label>
+                      <label style={labelStyle}>{t('current_job_title')}</label>
                       <input type="text" name="current_job_title" value={formData.current_job_title} onChange={handleChange} placeholder="e.g. Senior Welder / Mason" style={inputStyle} />
                     </div>
 
                     <div>
-                      <label style={labelStyle}>Previous Company / Employer</label>
+                      <label style={labelStyle}>{t('previous_company')}</label>
                       <input type="text" name="previous_company" value={formData.previous_company} onChange={handleChange} placeholder="Company Name" style={inputStyle} />
                     </div>
 
                     <div>
-                      <label style={labelStyle}>Preferred Country</label>
+                      <label style={labelStyle}>{t('preferred_country')}</label>
                       <select name="preferred_country" value={formData.preferred_country} onChange={handleChange} style={inputStyle}>
                         {PREFERRED_COUNTRIES.map((c, i) => (
                           <option key={i} value={c}>{c}</option>
@@ -377,56 +375,52 @@ export const ApplyJob = () => {
                     </div>
 
                     <div>
-                      <label style={labelStyle}>Expected Salary</label>
+                      <label style={labelStyle}>{t('expected_salary')}</label>
                       <input type="text" name="expected_salary" value={formData.expected_salary} onChange={handleChange} placeholder="e.g. 2500 AED / 3000 SAR" style={inputStyle} />
                     </div>
                   </div>
                 </div>
 
-                {/* ═══════════════════════════════
-                    SECTION 3: SKILLS & CERTIFICATIONS
-                ═══════════════════════════════ */}
+                {/* SECTION 3: SKILLS & CERTIFICATIONS */}
                 <div style={{ marginBottom: 36 }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 10, paddingBottom: 10, borderBottom: '2px solid var(--mist)', marginBottom: 20 }}>
                     <span style={{ width: 24, height: 24, borderRadius: '50%', background: 'var(--cobalt)', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 12, fontWeight: 700 }}>3</span>
-                    <h3 style={{ fontFamily: "'Playfair Display', serif", fontSize: 18, fontWeight: 700, color: 'var(--slate)', margin: 0 }}>Skills & Certifications</h3>
+                    <h3 style={{ fontFamily: "'Playfair Display', serif", fontSize: 18, fontWeight: 700, color: 'var(--slate)', margin: 0 }}>{t('skills_certifications')}</h3>
                   </div>
 
                   <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 18 }} className="form-grid-3">
                     <div>
-                      <label style={labelStyle}>Primary Skill</label>
+                      <label style={labelStyle}>{t('primary_skill')}</label>
                       <input type="text" name="primary_skill" value={formData.primary_skill} onChange={handleChange} placeholder="e.g. 6G TIG & MIG Welding" style={inputStyle} />
                     </div>
 
                     <div>
-                      <label style={labelStyle}>Additional Skills</label>
+                      <label style={labelStyle}>{t('additional_skills')}</label>
                       <input type="text" name="additional_skills" value={formData.additional_skills} onChange={handleChange} placeholder="e.g. Blueprint reading, Pipefitting" style={inputStyle} />
                     </div>
 
                     <div>
-                      <label style={labelStyle}>Certifications / Trade Test Certificate</label>
+                      <label style={labelStyle}>{t('certifications')}</label>
                       <input type="text" name="certifications" value={formData.certifications} onChange={handleChange} placeholder="e.g. ITI, IOSH, AWS Certified" style={inputStyle} />
                     </div>
                   </div>
                 </div>
 
-                {/* ═══════════════════════════════
-                    SECTION 4: PASSPORT & DOCUMENT UPLOADS
-                ═══════════════════════════════ */}
+                {/* SECTION 4: PASSPORT & DOCUMENT UPLOADS */}
                 <div style={{ marginBottom: 36 }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 10, paddingBottom: 10, borderBottom: '2px solid var(--mist)', marginBottom: 20 }}>
                     <span style={{ width: 24, height: 24, borderRadius: '50%', background: 'var(--cobalt)', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 12, fontWeight: 700 }}>4</span>
-                    <h3 style={{ fontFamily: "'Playfair Display', serif", fontSize: 18, fontWeight: 700, color: 'var(--slate)', margin: 0 }}>Passport & Documents Upload</h3>
+                    <h3 style={{ fontFamily: "'Playfair Display', serif", fontSize: 18, fontWeight: 700, color: 'var(--slate)', margin: 0 }}>{t('documents')}</h3>
                   </div>
 
                   <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 18, marginBottom: 20 }} className="form-grid-2">
                     <div>
-                      <label style={labelStyle}>Passport Number</label>
+                      <label style={labelStyle}>{t('passport_number')}</label>
                       <input type="text" name="passport_number" value={formData.passport_number} onChange={handleChange} placeholder="e.g. Z1234567" style={inputStyle} />
                     </div>
 
                     <div>
-                      <label style={labelStyle}>Passport Expiry Date</label>
+                      <label style={labelStyle}>{t('passport_expiry')}</label>
                       <input type="date" name="passport_expiry" value={formData.passport_expiry} onChange={handleChange} style={inputStyle} />
                     </div>
                   </div>
@@ -436,8 +430,8 @@ export const ApplyJob = () => {
                     
                     {/* CV Upload */}
                     <div style={uploadCardStyle}>
-                      <label style={labelStyle}>Upload CV / Resume <span style={{ color: '#ef4444' }}>*</span></label>
-                      <input type="file" ref={cvInputRef} accept=".pdf,.doc,.docx,.jpg,.jpeg,.png" style={{ display: 'none' }} onChange={(e) => handleFileSelect(e, setCvFile, 'CV / Resume')} />
+                      <label style={labelStyle}>{t('upload_cv')} <span style={{ color: '#ef4444' }}>*</span></label>
+                      <input type="file" ref={cvInputRef} accept=".pdf,.doc,.docx,.jpg,.jpeg,.png" style={{ display: 'none' }} onChange={(e) => handleFileSelect(e, setCvFile, t('upload_cv'))} />
                       <button type="button" onClick={() => cvInputRef.current.click()} style={uploadBtnStyle}>
                         📄 {cvFile ? cvFile.name : 'Choose CV File (PDF/DOC/JPG)'}
                       </button>
@@ -446,8 +440,8 @@ export const ApplyJob = () => {
 
                     {/* Passport Upload */}
                     <div style={uploadCardStyle}>
-                      <label style={labelStyle}>Upload Passport Copy</label>
-                      <input type="file" ref={passportInputRef} accept=".pdf,.doc,.docx,.jpg,.jpeg,.png" style={{ display: 'none' }} onChange={(e) => handleFileSelect(e, setPassportFile, 'Passport Document')} />
+                      <label style={labelStyle}>{t('upload_passport')}</label>
+                      <input type="file" ref={passportInputRef} accept=".pdf,.doc,.docx,.jpg,.jpeg,.png" style={{ display: 'none' }} onChange={(e) => handleFileSelect(e, setPassportFile, t('upload_passport'))} />
                       <button type="button" onClick={() => passportInputRef.current.click()} style={uploadBtnStyle}>
                         🛂 {passportFile ? passportFile.name : 'Choose Passport File'}
                       </button>
@@ -456,8 +450,8 @@ export const ApplyJob = () => {
 
                     {/* Experience Certificate */}
                     <div style={uploadCardStyle}>
-                      <label style={labelStyle}>Upload Experience Certificate</label>
-                      <input type="file" ref={expCertInputRef} accept=".pdf,.doc,.docx,.jpg,.jpeg,.png" style={{ display: 'none' }} onChange={(e) => handleFileSelect(e, setExpCertFile, 'Experience Certificate')} />
+                      <label style={labelStyle}>{t('upload_experience')}</label>
+                      <input type="file" ref={expCertInputRef} accept=".pdf,.doc,.docx,.jpg,.jpeg,.png" style={{ display: 'none' }} onChange={(e) => handleFileSelect(e, setExpCertFile, t('upload_experience'))} />
                       <button type="button" onClick={() => expCertInputRef.current.click()} style={uploadBtnStyle}>
                         🏆 {expCertFile ? expCertFile.name : 'Choose Experience Cert'}
                       </button>
@@ -466,8 +460,8 @@ export const ApplyJob = () => {
 
                     {/* Other Documents */}
                     <div style={uploadCardStyle}>
-                      <label style={labelStyle}>Upload Other Documents</label>
-                      <input type="file" ref={otherDocInputRef} accept=".pdf,.doc,.docx,.jpg,.jpeg,.png" style={{ display: 'none' }} onChange={(e) => handleFileSelect(e, setOtherDocFile, 'Other Document')} />
+                      <label style={labelStyle}>{t('upload_other')}</label>
+                      <input type="file" ref={otherDocInputRef} accept=".pdf,.doc,.docx,.jpg,.jpeg,.png" style={{ display: 'none' }} onChange={(e) => handleFileSelect(e, setOtherDocFile, t('upload_other'))} />
                       <button type="button" onClick={() => otherDocInputRef.current.click()} style={uploadBtnStyle}>
                         📁 {otherDocFile ? otherDocFile.name : 'Choose Other Document'}
                       </button>
@@ -477,24 +471,22 @@ export const ApplyJob = () => {
                   </div>
                 </div>
 
-                {/* ═══════════════════════════════
-                    SECTION 5: ADDITIONAL & CONSENT
-                ═══════════════════════════════ */}
+                {/* SECTION 5: ADDITIONAL & CONSENT */}
                 <div style={{ marginBottom: 36 }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 10, paddingBottom: 10, borderBottom: '2px solid var(--mist)', marginBottom: 20 }}>
                     <span style={{ width: 24, height: 24, borderRadius: '50%', background: 'var(--cobalt)', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 12, fontWeight: 700 }}>5</span>
-                    <h3 style={{ fontFamily: "'Playfair Display', serif", fontSize: 18, fontWeight: 700, color: 'var(--slate)', margin: 0 }}>Additional Information & Declaration</h3>
+                    <h3 style={{ fontFamily: "'Playfair Display', serif", fontSize: 18, fontWeight: 700, color: 'var(--slate)', margin: 0 }}>{t('additional_info')}</h3>
                   </div>
 
                   <div style={{ marginBottom: 20 }}>
                     <label style={labelStyle}>Message / Additional Details</label>
-                    <textarea name="message" rows="3" value={formData.message} onChange={handleChange} placeholder="Provide any additional details about your availability, trade testing, or job preferences..." style={{ ...inputStyle, resize: 'vertical' }} />
+                    <textarea name="message" rows="3" value={formData.message} onChange={handleChange} placeholder={t('message_placeholder')} style={{ ...inputStyle, resize: 'vertical' }} />
                   </div>
 
                   <div style={{ background: 'var(--mist)', border: '1.5px solid var(--fog)', borderRadius: 10, padding: '16px 20px', display: 'flex', alignItems: 'flex-start', gap: 12 }}>
                     <input type="checkbox" name="consent" id="consent" checked={formData.consent} onChange={handleChange} style={{ marginTop: 3, cursor: 'pointer', width: 18, height: 18 }} />
                     <label htmlFor="consent" style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: 13, color: 'var(--charcoal)', cursor: 'pointer', lineHeight: 1.5 }}>
-                      I hereby declare and confirm that all details, qualifications, work experience, and uploaded document certificates provided in this application are genuine, correct, and complete to the best of my knowledge. <span style={{ color: '#ef4444' }}>*</span>
+                      {t('declaration')} <span style={{ color: '#ef4444' }}>*</span>
                     </label>
                   </div>
                 </div>
@@ -524,10 +516,10 @@ export const ApplyJob = () => {
                   >
                     {loading ? (
                       <>
-                        <span className="inline-block animate-spin">⏳</span> Submitting Application...
+                        <span className="inline-block animate-spin">⏳</span> {t('submitting')}
                       </>
                     ) : (
-                      <>Submit Application →</>
+                      <>{t('submit_application')} →</>
                     )}
                   </button>
                 </div>

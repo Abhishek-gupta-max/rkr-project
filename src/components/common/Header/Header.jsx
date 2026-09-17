@@ -1,14 +1,16 @@
 import React from 'react';
 import Navbar from '../Navbar/Navbar';
 
-/**
- * Header wrapper — The Navbar component itself now contains
- * the announcement bar and uses `position: sticky` internally,
- * so this wrapper just renders Navbar directly.
- */
 export const Header = () => {
   return (
-    <header className="w-full z-50">
+    <header
+      style={{
+        position: 'sticky',
+        top: 0,
+        zIndex: 1000,
+        width: '100%'
+      }}
+    >
       <Navbar />
     </header>
   );
