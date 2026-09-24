@@ -226,7 +226,7 @@ export const Home = () => {
 
           <div style={{ position: 'relative' }} className="scroll-reveal-left">
             <div style={{ borderRadius: 16, overflow: 'hidden', height: 480, border: '1.5px solid var(--fog)', boxShadow: '0 16px 40px rgba(13,17,23,0.1)' }}>
-              <img src="/images/corporate_desk_empty_team.jpeg" alt="RKR Globalpath Recruitment Team" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+              <img src="/images/corporate_desk_empty_team.jpeg" alt="RKR Globalpath Recruitment Team" style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center top' }} />
             </div>
           </div>
 
@@ -589,32 +589,30 @@ export const Home = () => {
             </p>
           </div>
 
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 24 }} className="cert-grid">
+          <div style={{ maxWidth: 540, margin: '0 auto' }} className="cert-grid">
             {[
-              { src: '/images/certificate.PNG', title: 'Ministry of Corporate Affairs', label: 'Certificate of Incorporation', accent: 'var(--gold)' },
-              { src: '/images/license_certificate.PNG', title: 'Ministry of External Affairs', label: 'MEA License Certificate', accent: 'var(--cobalt)' },
-              { src: '/images/gst_certificate.pdf', title: 'GST Registration', label: 'Goods & Services Tax', accent: 'var(--slate)' },
+              { src: '/images/rkr_gst_certificate.pdf', title: 'GST Registration Certificate', label: 'Goods & Services Tax (Government of India)', accent: 'var(--gold)' },
             ].map((cert, i) => (
               <div key={i} onClick={() => openCertModal(cert.src, cert.label)}
-                style={{ cursor: 'pointer', background: 'var(--ivory)', border: '1.5px solid var(--fog)', borderRadius: 14, overflow: 'hidden', transition: 'all 0.25s ease' }}
-                className={`scroll-scale stagger-${i+1}`}
-                onMouseEnter={e => { e.currentTarget.style.borderColor = cert.accent; }}
-                onMouseLeave={e => { e.currentTarget.style.borderColor = 'var(--fog)'; }}
+                style={{ cursor: 'pointer', background: 'var(--ivory)', border: '1.5px solid var(--fog)', borderRadius: 16, overflow: 'hidden', transition: 'all 0.25s ease', boxShadow: '0 10px 30px rgba(0,0,0,0.06)' }}
+                className="scroll-scale"
+                onMouseEnter={e => { e.currentTarget.style.borderColor = cert.accent; e.currentTarget.style.transform = 'translateY(-4px)'; }}
+                onMouseLeave={e => { e.currentTarget.style.borderColor = 'var(--fog)'; e.currentTarget.style.transform = 'translateY(0)'; }}
               >
-                <div style={{ height: 3, background: cert.accent }} />
-                <div style={{ padding: 24, background: 'var(--mist)', height: 180, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                  {cert.src.endsWith('.pdf') ? (
-                    <div style={{ textAlign: 'center', color: 'var(--steel)' }}>
-                      <svg width="36" height="36" fill="none" stroke="currentColor" strokeWidth="1.5" viewBox="0 0 24 24" style={{ opacity: 0.5, marginBottom: 6 }}><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/></svg>
-                      <div style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: 12, fontWeight: 600 }}>Click to View Document</div>
-                    </div>
-                  ) : (
-                    <img src={cert.src} alt={cert.label} style={{ maxHeight: 150, maxWidth: '100%', objectFit: 'contain', borderRadius: 6 }} loading="lazy" />
-                  )}
+                <div style={{ height: 4, background: cert.accent }} />
+                <div style={{ padding: 24, background: 'var(--mist)', height: 260, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <iframe
+                    src={`${cert.src}#view=fitH&toolbar=0`}
+                    title={cert.title}
+                    style={{ width: '100%', height: '100%', border: 'none', borderRadius: 8, pointerEvents: 'none' }}
+                  />
                 </div>
-                <div style={{ padding: '16px 20px' }}>
-                  <div style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: 14, fontWeight: 700, color: 'var(--slate)', marginBottom: 2 }}>{cert.title}</div>
-                  <div style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: 12, color: 'var(--steel)' }}>{cert.label}</div>
+                <div style={{ padding: '20px 24px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                  <div>
+                    <div style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: 16, fontWeight: 700, color: 'var(--slate)', marginBottom: 2 }}>{cert.title}</div>
+                    <div style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: 12.5, color: 'var(--steel)' }}>{cert.label}</div>
+                  </div>
+                  <span style={{ fontSize: 13, fontWeight: 700, color: 'var(--cobalt)' }}>View PDF →</span>
                 </div>
               </div>
             ))}
@@ -622,8 +620,6 @@ export const Home = () => {
         </div>
         <style>{`
           .cert-section { padding: 90px 60px; }
-          .cert-grid { grid-template-columns: repeat(3, 1fr); }
-          @media (max-width: 900px) { .cert-grid { grid-template-columns: 1fr !important; } }
           @media (max-width: 640px) { .cert-section { padding: 56px 20px !important; } }
         `}</style>
       </section>

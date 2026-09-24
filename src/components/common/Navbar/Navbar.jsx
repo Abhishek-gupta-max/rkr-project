@@ -62,26 +62,89 @@ export const Navbar = () => {
     };
   }, []);
 
+  const [activeHash, setActiveHash] = useState(window.location.hash || '#home');
+
+  /* ── Active hash & scroll section observer for Home page anchors ── */
+  useEffect(() => {
+    if (location.pathname !== '/') {
+      setActiveHash('');
+      return;
+    }
+
+    const handleHashChange = () => {
+      if (window.location.hash) {
+        setActiveHash(window.location.hash);
+      }
+    };
+    window.addEventListener('hashchange', handleHashChange);
+
+    const sections = ['manpower', 'destinations', 'services', 'about', 'process'];
+    const onScroll = () => {
+      if (window.scrollY < 200) {
+        setActiveHash('#home');
+        return;
+      }
+      const scrollPos = window.scrollY + 220;
+      for (const sectionId of sections) {
+        const el = document.getElementById(sectionId);
+        if (el) {
+          const top = el.offsetTop;
+          const height = el.offsetHeight;
+          if (scrollPos >= top && scrollPos < top + height) {
+            setActiveHash('#' + sectionId);
+            break;
+          }
+        }
+      }
+    };
+
+    window.addEventListener('scroll', onScroll, { passive: true });
+    onScroll();
+    return () => {
+      window.removeEventListener('hashchange', handleHashChange);
+      window.removeEventListener('scroll', onScroll);
+    };
+  }, [location.pathname]);
+
   /* ── Smart anchor/route click handler ── */
   const handleNavClick = (e, path) => {
     if (path.startsWith('/#')) {
       e.preventDefault();
       const anchor = path.slice(2);
+      setActiveHash('#' + anchor);
       if (location.pathname !== '/') {
-        navigate('/');
+        navigate('/#' + anchor);
         setTimeout(() => {
           document.getElementById(anchor)?.scrollIntoView({ behavior: 'smooth' });
         }, 350);
       } else {
+        window.history.pushState(null, '', '/#' + anchor);
         document.getElementById(anchor)?.scrollIntoView({ behavior: 'smooth' });
+      }
+      setIsOpen(false);
+    } else if (path === '/') {
+      if (location.pathname === '/') {
+        e.preventDefault();
+        setActiveHash('#home');
+        window.history.pushState(null, '', '/');
+        window.scrollTo({ top: 0, behavior: 'smooth' });
       }
       setIsOpen(false);
     }
   };
 
   const isActive = (path) => {
+    if (location.pathname === '/') {
+      if (path === '/') {
+        return !activeHash || activeHash === '#home';
+      }
+      if (path.startsWith('/#')) {
+        return activeHash === path.slice(1);
+      }
+      return false;
+    }
     if (path.startsWith('/#')) return false;
-    if (path === '/') return location.pathname === '/';
+    if (path === '/') return false;
     return location.pathname.startsWith(path);
   };
 
@@ -150,7 +213,7 @@ export const Navbar = () => {
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'space-between',
-            height: 72,
+            height: 82,
             gap: 16,
           }}
         >
@@ -161,23 +224,23 @@ export const Navbar = () => {
               textDecoration: 'none',
               display: 'flex',
               alignItems: 'center',
-              gap: 12,
+              gap: 14,
               flexShrink: 0,
             }}
           >
             <img
               src="/images/logo.jpeg"
               alt="RKR Globalpath HR Manpower"
-              style={{ height: 44, width: 'auto', objectFit: 'contain', borderRadius: 4 }}
+              style={{ height: 60, width: 'auto', objectFit: 'contain', borderRadius: 6 }}
             />
-            <div style={{ display: 'flex', flexDirection: 'column', lineHeight: 1 }}>
+            <div style={{ display: 'flex', flexDirection: 'column', lineHeight: 1.05 }}>
               <span
                 style={{
                   fontFamily: "'Playfair Display', serif",
-                  fontWeight: 700,
-                  fontSize: 16,
+                  fontWeight: 800,
+                  fontSize: 21,
                   color: 'var(--slate)',
-                  letterSpacing: '-0.01em',
+                  letterSpacing: '0.01em',
                 }}
               >
                 RKR GLOBALPATH
@@ -185,12 +248,12 @@ export const Navbar = () => {
               <span
                 style={{
                   fontFamily: "'Plus Jakarta Sans', sans-serif",
-                  fontWeight: 600,
-                  fontSize: 9.5,
+                  fontWeight: 700,
+                  fontSize: 11.5,
                   color: 'var(--gold-dim)',
-                  letterSpacing: '0.14em',
+                  letterSpacing: '0.16em',
                   textTransform: 'uppercase',
-                  marginTop: 2,
+                  marginTop: 3,
                 }}
               >
                 HR MANPOWER
@@ -383,59 +446,6 @@ export const Navbar = () => {
                 </div>
               )}
             </div>
-
-            {/* WhatsApp quick contact */}
-            <a
-              href={`https://wa.me/${CONTACT_INFO.whatsApp}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                width: 36,
-                height: 36,
-                borderRadius: '50%',
-                background: '#25D366',
-                color: '#fff',
-                textDecoration: 'none',
-                transition: 'transform 0.2s ease, box-shadow 0.2s ease',
-                boxShadow: '0 2px 8px rgba(37,211,102,0.3)',
-              }}
-              title="WhatsApp"
-              className="nav-whatsapp-btn"
-            >
-              <svg width="18" height="18" fill="currentColor" viewBox="0 0 24 24">
-                <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
-              </svg>
-            </a>
-
-            {/* Get Manpower CTA */}
-            <Link
-              to="/contact-info"
-              id="nav-get-manpower"
-              style={{
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: 6,
-                padding: '9px 18px',
-                background: 'var(--cobalt)',
-                color: '#fff',
-                fontFamily: "'Plus Jakarta Sans', sans-serif",
-                fontWeight: 700,
-                fontSize: 13,
-                borderRadius: 10,
-                textDecoration: 'none',
-                letterSpacing: '0.01em',
-                boxShadow: '0 4px 14px rgba(29,78,216,0.3)',
-                transition: 'all 0.25s ease',
-              }}
-            >
-              {t('get_manpower')}
-              <svg width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24" style={{ transform: isRtl ? 'rotate(180deg)' : 'none' }}>
-                <path d="M5 12h14M12 5l7 7-7 7"/>
-              </svg>
-            </Link>
 
             {/* Mobile Hamburger */}
             <button

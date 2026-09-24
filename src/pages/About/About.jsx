@@ -18,7 +18,7 @@ export const About = () => {
   return (
     <div>
       {/* Hero Section */}
-      <section className="relative overflow-hidden text-white pt-32 pb-24 md:pt-40 md:pb-36 bg-cover bg-center" style={{ backgroundImage: "url('/images/corporate_desk_empty_team.jpeg')" }}>
+      <section className="relative overflow-hidden text-white pt-32 pb-24 md:pt-40 md:pb-36 bg-cover bg-top" style={{ backgroundImage: "url('/images/corporate_desk_empty_team.jpeg')" }}>
         <div className="absolute inset-0 bg-gradient-to-r from-slate-950/95 via-blue-950/90 to-blue-900/80 pointer-events-none" />
         
         <div className="absolute w-[300px] h-[300px] bg-amber-500/10 rounded-full -top-[100px] -right-[100px] pointer-events-none" />
@@ -61,7 +61,7 @@ export const About = () => {
             <div className="scroll-fade-in-right">
               <div className="bg-white rounded-2xl shadow-xl overflow-hidden border border-slate-100 hover:shadow-2xl transition-all duration-300">
                 <div className="bg-gradient-to-br from-blue-50 to-blue-100 h-[24rem] sm:h-[26rem] flex items-center justify-center relative overflow-hidden">
-                  <img src="/images/corporate_desk_empty_team.jpeg" alt="RKR Global Path Management" className="w-full h-full object-cover" />
+                  <img src="/images/corporate_desk_empty_team.jpeg" alt="RKR Global Path Management" className="w-full h-full object-cover object-top" />
                   <div className="absolute bottom-0 left-0 right-0 h-1.5 bg-gradient-to-r from-amber-400 to-amber-600"></div>
                 </div>
                 
@@ -174,174 +174,34 @@ export const About = () => {
             </p>
           </div>
 
-          {/* Certificates Grid */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
-            {/* Certificate 1: Incorporation Certificate */}
+          {/* Certificates Grid - Single GST Certificate */}
+          <div className="max-w-xl mx-auto">
             <div className="scroll-scale-in">
               <div 
-                className="group bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-500 overflow-hidden border border-gray-100 hover:border-amber-200 cursor-pointer" 
-                onClick={() => openCertModal('/images/certificate.PNG', 'Certificate of Incorporation')}
+                className="group bg-white rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-500 overflow-hidden border border-gray-100 hover:border-amber-300 cursor-pointer" 
+                onClick={() => openCertModal('/images/rkr_gst_certificate.pdf', 'GST Registration Certificate')}
               >
-                <div className="relative overflow-hidden bg-gradient-to-br from-amber-50 to-orange-50 p-4 sm:p-6">
+                <div className="relative overflow-hidden bg-gradient-to-br from-amber-50 via-orange-50 to-amber-100 p-4 sm:p-6">
                   <div className="absolute top-3 right-3 z-10 w-9 h-9 bg-gradient-to-br from-amber-400 to-amber-600 rounded-full flex items-center justify-center text-white shadow-lg transform group-hover:scale-110 transition-transform duration-300">
                     <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd"/></svg>
                   </div>
-                  <img src="/images/certificate.PNG" alt="Certificate of Incorporation" className="w-full h-44 sm:h-52 md:h-60 object-contain rounded-lg transform group-hover:scale-105 transition-transform duration-500" loading="lazy" />
-                  <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-all duration-300 flex items-center justify-center">
-                    <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-white/90 backdrop-blur-sm rounded-full p-2.5 shadow-lg">
-                      <svg className="w-5 h-5 text-blue-900" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7"/></svg>
-                    </div>
-                  </div>
-                </div>
-                <div className="p-4 sm:p-5 text-center">
-                  <h3 className="text-base font-bold text-blue-900 font-heading">Incorporation Certificate</h3>
-                  <p className="text-xs text-amber-600 font-semibold">Ministry of External Affairs</p>
-                </div>
-              </div>
-            </div>
-
-            {/* Certificate 2: Registration Certificate */}
-            <div className="scroll-scale-in">
-              <div 
-                className="group bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-500 overflow-hidden border border-gray-100 hover:border-blue-200 cursor-pointer" 
-                onClick={() => openCertModal('/images/license_certificate.PNG', 'Registration Certificate')}
-              >
-                <div className="relative overflow-hidden bg-gradient-to-br from-blue-50 to-indigo-50 p-4 sm:p-6">
-                  <div className="absolute top-3 right-3 z-10 w-9 h-9 bg-gradient-to-br from-blue-400 to-blue-600 rounded-full flex items-center justify-center text-white shadow-lg transform group-hover:scale-110 transition-transform duration-300">
-                    <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd"/></svg>
-                  </div>
-                  <img src="/images/license_certificate.PNG" alt="Registration Certificate" className="w-full h-44 sm:h-52 md:h-60 object-contain rounded-lg transform group-hover:scale-105 transition-transform duration-500" loading="lazy" />
-                  <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-all duration-300 flex items-center justify-center">
-                    <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-white/90 backdrop-blur-sm rounded-full p-2.5 shadow-lg">
-                      <svg className="w-5 h-5 text-blue-900" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7"/></svg>
-                    </div>
-                  </div>
-                </div>
-                <div className="p-4 sm:p-5 text-center">
-                  <h3 className="text-base font-bold text-blue-900 font-heading">Registration Certificate</h3>
-                  <p className="text-xs text-blue-600 font-semibold">State Govt. Approved</p>
-                </div>
-              </div>
-            </div>
-
-            {/* Certificate 3: MEA Emblem */}
-            {/* <div>
-              <div 
-                className="group bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-500 overflow-hidden border border-gray-100 hover:border-green-200 cursor-pointer" 
-                onClick={() => openCertModal('/images/mea_logo.png', 'MEA Official Recognition')}
-              >
-                <div className="relative overflow-hidden bg-gradient-to-br from-green-50 to-emerald-50 p-4 sm:p-6">
-                  <div className="absolute top-3 right-3 z-10 w-10 h-10 bg-gradient-to-br from-green-400 to-green-600 rounded-full flex items-center justify-center text-white shadow-lg transform group-hover:scale-110 transition-transform duration-300">
-                    <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd"/></svg>
-                  </div>
-                  <img src="/images/mea_logo.png" alt="MEA Official Recognition" className="w-full h-48 sm:h-56 md:h-64 object-contain rounded-lg transform group-hover:scale-105 transition-transform duration-500" loading="lazy" />
-                  <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-all duration-300 flex items-center justify-center">
-                    <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-white/90 backdrop-blur-sm rounded-full p-3 shadow-lg">
-                      <svg className="w-6 h-6 text-blue-900" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7"/></svg>
-                    </div>
-                  </div>
-                </div>
-                <div className="p-6">
-                  <div className="flex items-center gap-3 mb-3">
-                    <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-green-400 to-green-600 flex items-center justify-center flex-shrink-0">
-                      <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"/></svg>
-                    </div>
-                    <div>
-                      <h3 className="text-lg font-bold text-blue-900 font-heading">MEA Recognized</h3>
-                      <p className="text-xs text-green-600 font-semibold">Official Government Emblem</p>
-                    </div>
-                  </div>
-                  <p className="text-slate-600 text-sm leading-relaxed">Proudly bearing the official MEA emblem, signifying our trusted partnership with the Government of India for overseas manpower.</p>
-                </div>
-              </div>
-            </div>*/}
-
-            {/* Certificate 3 */}
-            <div className="scroll-scale-in">
-              <div 
-                className="group bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-500 overflow-hidden border border-gray-100 hover:border-purple-200 cursor-pointer" 
-                onClick={() => openCertModal('/images/updated_shop_and_establishment.pdf', 'Shop & Establishment Certificate')}
-              >
-                <div className="relative overflow-hidden bg-gradient-to-br from-purple-50 to-fuchsia-50 p-4 sm:p-6">
-                  <div className="absolute top-3 right-3 z-10 w-9 h-9 bg-gradient-to-br from-purple-400 to-purple-600 rounded-full flex items-center justify-center text-white shadow-lg transform group-hover:scale-110 transition-transform duration-300">
-                    <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd"/></svg>
-                  </div>
-                  <div className="w-full h-44 sm:h-52 md:h-60 overflow-hidden rounded-lg border border-dashed border-purple-200 bg-purple-50 relative">
+                  <div className="w-full h-64 sm:h-72 overflow-hidden rounded-xl border border-amber-200 bg-white shadow-inner relative">
                     <iframe
-                      src="/images/updated_shop_and_establishment.pdf#view=fitH&toolbar=0"
-                      title="Shop & Establishment Certificate Preview"
-                      className="w-full h-full"
+                      src="/images/rkr_gst_certificate.pdf#view=fitH&toolbar=0"
+                      title="GST Registration Certificate Preview"
+                      className="w-full h-full pointer-events-none"
                     />
                   </div>
                   <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-all duration-300 flex items-center justify-center">
-                    <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-white/90 backdrop-blur-sm rounded-full p-2.5 shadow-lg">
-                      <svg className="w-5 h-5 text-blue-900" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7"/></svg>
+                    <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-white/95 backdrop-blur-sm rounded-full px-4 py-2 shadow-lg flex items-center gap-2">
+                      <svg className="w-4 h-4 text-blue-900" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7"/></svg>
+                      <span className="text-xs font-bold text-blue-900">Click to View Document</span>
                     </div>
                   </div>
                 </div>
-                <div className="p-4 sm:p-5 text-center">
-                  <h3 className="text-base font-bold text-blue-900 font-heading">Shop & Establishment</h3>
-                 {/* <p className="text-xs text-purple-600 font-semibold">Updated PDF Certificate</p> */}
-                </div>
-              </div>
-            </div>
-
-            {/* Certificate 4 */}
-            <div className="scroll-scale-in">
-              <div 
-                className="group bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-500 overflow-hidden border border-gray-100 hover:border-cyan-200 cursor-pointer" 
-                onClick={() => openCertModal('/images/udyam_registration_certificate.pdf', 'Udyam Registration Certificate')}
-              >
-                <div className="relative overflow-hidden bg-gradient-to-br from-cyan-50 to-sky-50 p-4 sm:p-6">
-                  <div className="absolute top-3 right-3 z-10 w-9 h-9 bg-gradient-to-br from-cyan-400 to-sky-600 rounded-full flex items-center justify-center text-white shadow-lg transform group-hover:scale-110 transition-transform duration-300">
-                    <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd"/></svg>
-                  </div>
-                  <div className="w-full h-44 sm:h-52 md:h-60 overflow-hidden rounded-lg border border-dashed border-cyan-200 bg-cyan-50 relative">
-                    <iframe
-                      src="/images/udyam_registration_certificate.pdf#view=fitH&toolbar=0"
-                      title="Udyam Registration Certificate"
-                      className="w-full h-full"
-                    />
-                  </div>
-                  <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-all duration-300 flex items-center justify-center">
-                    <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-white/90 backdrop-blur-sm rounded-full p-2.5 shadow-lg">
-                      <svg className="w-5 h-5 text-blue-900" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7"/></svg>
-                    </div>
-                  </div>
-                </div>
-                <div className="p-4 sm:p-5 text-center">
-                  <h3 className="text-base font-bold text-blue-900 font-heading">Ministry of External Affairs</h3>
-                  {/* <p className="text-xs text-blue-600 font-semibold">State Govt. Approved</p> */}
-                </div>
-              </div>
-            </div>
-
-            {/* Certificate 5 */}
-            <div className="scroll-scale-in">
-              <div 
-                className="group bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-500 overflow-hidden border border-gray-100 hover:border-amber-200 cursor-pointer" 
-                onClick={() => openCertModal('/images/gst_certificate.pdf', 'GST Certificate')}
-              >
-                <div className="relative overflow-hidden bg-gradient-to-br from-amber-50 to-orange-50 p-4 sm:p-6">
-                  <div className="absolute top-3 right-3 z-10 w-9 h-9 bg-gradient-to-br from-amber-400 to-orange-600 rounded-full flex items-center justify-center text-white shadow-lg transform group-hover:scale-110 transition-transform duration-300">
-                    <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd"/></svg>
-                  </div>
-                  <div className="w-full h-44 sm:h-52 md:h-60 overflow-hidden rounded-lg border border-dashed border-amber-200 bg-amber-50 relative">
-                    <iframe
-                      src="/images/gst_certificate.pdf#view=fitH&toolbar=0"
-                      title="GST Certificate"
-                      className="w-full h-full"
-                    />
-                  </div>
-                  <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-all duration-300 flex items-center justify-center">
-                    <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-white/90 backdrop-blur-sm rounded-full p-2.5 shadow-lg">
-                      <svg className="w-5 h-5 text-blue-900" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7"/></svg>
-                    </div>
-                  </div>
-                </div>
-                <div className="p-4 sm:p-5 text-center">
-                  <h3 className="text-base font-bold text-blue-900 font-heading">GST Certificate</h3>
-                  <p className="text-xs text-amber-600 font-semibold">Goods & Services Tax</p>
+                <div className="p-5 text-center bg-white">
+                  <h3 className="text-lg font-bold text-blue-900 font-heading">GST Registration Certificate</h3>
+                  <p className="text-xs text-amber-600 font-semibold mt-1">Goods & Services Tax (Government of India)</p>
                 </div>
               </div>
             </div>
@@ -361,8 +221,8 @@ export const About = () => {
               </div>
               <div className="flex items-center gap-6">
                 <div className="text-center">
-                  <p className="text-2xl font-bold text-amber-300">6+</p>
-                  <p className="text-xs text-blue-200">Certificates</p>
+                  <p className="text-xl font-bold text-amber-300">GST Registration</p>
+                  <p className="text-xs text-blue-200">Official Government Record</p>
                 </div>
                 <div className="w-px h-10 bg-blue-600 hidden md:block"></div>
                 <div className="text-center">

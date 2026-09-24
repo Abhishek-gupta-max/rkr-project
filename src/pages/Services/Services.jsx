@@ -87,20 +87,134 @@ export const Services = () => {
       {/* ── Services Grid ── */}
       <section style={{ padding: '80px 80px', background: 'var(--mist)' }} className="srv-grid-section">
         <div style={{ maxWidth: 1280, margin: '0 auto' }}>
-          {/* Featured first service (wide) */}
-          <div style={{ position: 'relative', height: 380, borderRadius: 20, overflow: 'hidden', marginBottom: 20, cursor: 'pointer' }}>
-            <img src={SERVICES_FULL[0].image} alt={SERVICES_FULL[0].title} style={{ width: '100%', height: '100%', objectFit: 'cover', transition: 'transform 0.7s ease' }}
-              onMouseEnter={e => { e.currentTarget.style.transform = 'scale(1.04)'; }}
-              onMouseLeave={e => { e.currentTarget.style.transform = 'scale(1)'; }}
-            />
-            <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to right, rgba(13,17,23,0.88) 0%, rgba(13,17,23,0.2) 60%, transparent 100%)' }} />
-            <div style={{ position: 'absolute', inset: 0, padding: '44px 52px', display: 'flex', flexDirection: 'column', justifyContent: 'flex-end' }}>
-              <span style={{ display: 'inline-block', padding: '4px 12px', background: 'var(--gold)', color: 'var(--slate)', borderRadius: 6, fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: 10, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.12em', marginBottom: 12, width: 'fit-content' }}>{SERVICES_FULL[0].type}</span>
-              <h2 style={{ fontFamily: "'Playfair Display', serif", fontSize: 'clamp(24px, 3vw, 40px)', fontWeight: 700, color: '#fff', marginBottom: 10, lineHeight: 1.2 }}>{SERVICES_FULL[0].title}</h2>
-              <p style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: 14, color: 'rgba(255,255,255,0.6)', maxWidth: 500, lineHeight: 1.65, marginBottom: 20 }}>{SERVICES_FULL[0].description}</p>
-              <Link to="/contact-info" style={{ display: 'inline-flex', alignItems: 'center', gap: 6, fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: 13, fontWeight: 700, color: 'var(--gold)', textDecoration: 'none' }}>
+          {/* Featured first service (wide 2-column split card) */}
+          <div
+            style={{
+              display: 'grid',
+              gridTemplateColumns: '1.1fr 0.9fr',
+              background: 'var(--slate)',
+              borderRadius: 24,
+              overflow: 'hidden',
+              marginBottom: 28,
+              boxShadow: '0 20px 45px rgba(13,17,23,0.18)',
+              border: '1.5px solid rgba(255,255,255,0.1)',
+            }}
+            className="srv-featured-card"
+          >
+            {/* Left Content */}
+            <div
+              style={{
+                padding: '48px 52px',
+                display: 'flex',
+                flexDirection: 'column',
+                justifyContent: 'center',
+                zIndex: 2,
+              }}
+              className="srv-featured-content"
+            >
+              <span
+                style={{
+                  display: 'inline-block',
+                  padding: '5px 14px',
+                  background: 'var(--gold)',
+                  color: 'var(--slate)',
+                  borderRadius: 6,
+                  fontFamily: "'Plus Jakarta Sans', sans-serif",
+                  fontSize: 10.5,
+                  fontWeight: 800,
+                  textTransform: 'uppercase',
+                  letterSpacing: '0.14em',
+                  marginBottom: 16,
+                  width: 'fit-content',
+                }}
+              >
+                {SERVICES_FULL[0].type}
+              </span>
+              <h2
+                style={{
+                  fontFamily: "'Playfair Display', serif",
+                  fontSize: 'clamp(26px, 3.2vw, 42px)',
+                  fontWeight: 700,
+                  color: '#fff',
+                  marginBottom: 14,
+                  lineHeight: 1.2,
+                }}
+              >
+                {SERVICES_FULL[0].title}
+              </h2>
+              <p
+                style={{
+                  fontFamily: "'Plus Jakarta Sans', sans-serif",
+                  fontSize: 15,
+                  color: 'rgba(255,255,255,0.7)',
+                  lineHeight: 1.7,
+                  marginBottom: 24,
+                }}
+              >
+                {SERVICES_FULL[0].description}
+              </p>
+
+              {/* Service details list */}
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10, marginBottom: 28 }}>
+                {SERVICES_FULL[0].details.map((d, idx) => (
+                  <div key={idx} style={{ display: 'flex', alignItems: 'center', gap: 8, fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: 13, color: 'rgba(255,255,255,0.85)', fontWeight: 500 }}>
+                    <span style={{ color: 'var(--gold)', fontWeight: 700 }}>✓</span> {d}
+                  </div>
+                ))}
+              </div>
+
+              <Link
+                to="/contact-info"
+                style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: 8,
+                  padding: '13px 28px',
+                  background: 'var(--gold)',
+                  color: 'var(--slate)',
+                  borderRadius: 10,
+                  fontFamily: "'Plus Jakarta Sans', sans-serif",
+                  fontSize: 13.5,
+                  fontWeight: 700,
+                  textDecoration: 'none',
+                  width: 'fit-content',
+                  transition: 'all 0.25s ease',
+                  boxShadow: '0 4px 16px rgba(201,168,76,0.3)',
+                }}
+                onMouseEnter={e => { e.currentTarget.style.background = 'var(--gold-light)'; e.currentTarget.style.transform = 'translateY(-2px)'; }}
+                onMouseLeave={e => { e.currentTarget.style.background = 'var(--gold)'; e.currentTarget.style.transform = 'translateY(0)'; }}
+              >
                 Request This Service <svg width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
               </Link>
+            </div>
+
+            {/* Right Image Container - Full image frame centered top */}
+            <div
+              style={{
+                position: 'relative',
+                minHeight: 460,
+                background: '#0e172a',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                overflow: 'hidden',
+              }}
+              className="srv-featured-img-wrap"
+            >
+              <img
+                src={SERVICES_FULL[0].image}
+                alt={SERVICES_FULL[0].title}
+                style={{
+                  width: '100%',
+                  height: '100%',
+                  objectFit: 'cover',
+                  objectPosition: 'center 15%',
+                  transition: 'transform 0.7s ease',
+                }}
+                onMouseEnter={e => { e.currentTarget.style.transform = 'scale(1.03)'; }}
+                onMouseLeave={e => { e.currentTarget.style.transform = 'scale(1)'; }}
+              />
+              <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to right, rgba(13,17,23,0.3) 0%, transparent 40%)', pointerEvents: 'none' }} />
             </div>
           </div>
 
@@ -108,12 +222,12 @@ export const Services = () => {
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 20 }} className="srv-inner-grid">
             {SERVICES_FULL.slice(1).map((srv, i) => (
               <div key={i}
-                style={{ position: 'relative', borderRadius: 16, overflow: 'hidden', cursor: 'pointer', height: 280 }}
+                style={{ position: 'relative', borderRadius: 16, overflow: 'hidden', cursor: 'pointer', height: 290 }}
                 onMouseEnter={() => setActiveService(i)}
                 onMouseLeave={() => setActiveService(null)}
               >
-                <img src={srv.image} alt={srv.title} style={{ width: '100%', height: '100%', objectFit: 'cover', transition: 'transform 0.6s ease', transform: activeService === i ? 'scale(1.06)' : 'scale(1)' }} />
-                <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to top, rgba(13,17,23,0.9) 0%, rgba(13,17,23,0.35) 60%, transparent 100%)', transition: 'opacity 0.3s ease', opacity: activeService === i ? 1 : 0.85 }} />
+                <img src={srv.image} alt={srv.title} style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center top', transition: 'transform 0.6s ease', transform: activeService === i ? 'scale(1.06)' : 'scale(1)' }} />
+                <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to top, rgba(13,17,23,0.92) 0%, rgba(13,17,23,0.35) 60%, transparent 100%)', transition: 'opacity 0.3s ease', opacity: activeService === i ? 1 : 0.85 }} />
                 <div style={{ position: 'absolute', inset: 0, padding: '20px 24px', display: 'flex', flexDirection: 'column', justifyContent: 'flex-end' }}>
                   <span style={{ display: 'inline-block', padding: '3px 10px', background: 'rgba(201,168,76,0.85)', color: 'var(--slate)', borderRadius: 5, fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: 9, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 8, width: 'fit-content' }}>{srv.type}</span>
                   <h3 style={{ fontFamily: "'Playfair Display', serif", fontSize: 'clamp(16px, 1.8vw, 22px)', fontWeight: 700, color: '#fff', marginBottom: 8, lineHeight: 1.25 }}>{srv.title}</h3>
@@ -140,9 +254,18 @@ export const Services = () => {
         <style>{`
           .srv-grid-section { padding:80px 80px; }
           .srv-inner-grid { grid-template-columns:repeat(2,1fr); }
-          @media (max-width:1024px) { .srv-grid-section { padding:64px 32px !important; } }
+          @media (max-width:1024px) {
+            .srv-grid-section { padding:64px 32px !important; }
+            .srv-featured-card { grid-template-columns: 1fr !important; }
+            .srv-featured-content { padding: 36px 32px !important; }
+            .srv-featured-img-wrap { min-height: 380px !important; }
+          }
           @media (max-width:768px) { .srv-inner-grid { grid-template-columns:1fr !important; } }
-          @media (max-width:640px) { .srv-grid-section { padding:48px 20px !important; } }
+          @media (max-width:640px) {
+            .srv-grid-section { padding:48px 20px !important; }
+            .srv-featured-content { padding: 28px 20px !important; }
+            .srv-featured-img-wrap { min-height: 300px !important; }
+          }
         `}</style>
       </section>
 
