@@ -170,25 +170,31 @@ export const Navbar = () => {
       <div
         style={{
           background: 'var(--slate)',
-          color: 'rgba(255,255,255,0.75)',
+          color: 'rgba(255,255,255,0.7)',
           fontSize: '11.5px',
           fontFamily: "'Plus Jakarta Sans', sans-serif",
           fontWeight: 500,
           letterSpacing: '0.04em',
-          padding: '7px 24px',
+          padding: '8px 24px',
           textAlign: 'center',
-          borderBottom: '1px solid rgba(255,255,255,0.08)',
+          borderBottom: '1px solid rgba(255,255,255,0.06)',
+          position: 'relative',
+          overflow: 'hidden',
         }}
       >
-        <span style={{ color: 'var(--gold)', margin: isRtl ? '0 0 0 6px' : '0 6px 0 0' }}>●</span>
-        {t('announcement')}
-        <span style={{ margin: '0 12px', opacity: 0.3 }}>|</span>
-        <a
-          href={`tel:${CONTACT_INFO.phone}`}
-          style={{ color: 'rgba(255,255,255,0.85)', textDecoration: 'none' }}
-        >
-          {CONTACT_INFO.phone}
-        </a>
+        {/* Subtle shimmer sweep */}
+        <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(90deg, transparent 0%, rgba(201,168,76,0.04) 50%, transparent 100%)', animation: 'shimmer 6s ease-in-out infinite', pointerEvents: 'none' }} />
+        <span style={{ position: 'relative', zIndex: 1 }}>
+          <span style={{ color: 'var(--gold)', margin: isRtl ? '0 0 0 6px' : '0 6px 0 0', fontSize: 8 }}>●</span>
+          {t('announcement')}
+          <span style={{ margin: '0 12px', opacity: 0.25 }}>|</span>
+          <a
+            href={`tel:${CONTACT_INFO.phone}`}
+            style={{ color: 'rgba(255,255,255,0.9)', textDecoration: 'none', fontWeight: 700 }}
+          >
+            {CONTACT_INFO.phone}
+          </a>
+        </span>
       </div>
 
       {/* ── Main Navigation Header (FIXED STICKY TOP: 0) ── */}

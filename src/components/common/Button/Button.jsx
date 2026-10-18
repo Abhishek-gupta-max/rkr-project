@@ -13,8 +13,8 @@ export const Button = ({
   const baseStyles = 'inline-flex items-center justify-center font-semibold transition-all duration-200 focus:outline-none';
   
   const variants = {
-    primary: 'bg-gradient-to-r from-[#e11d48] to-[#be123c] hover:from-[#be123c] hover:to-[#9f1239] text-white shadow-sm hover:shadow-md active:scale-[0.98]',
-    secondary: 'bg-[#0047ba] hover:bg-[#152e72] text-white shadow-sm hover:shadow-md active:scale-[0.98]',
+    primary: 'bg-gradient-to-r from-[#1D4ED8] to-[#1A2744] hover:from-[#1A2744] hover:to-[#0D1117] text-white shadow-sm hover:shadow-md active:scale-[0.98]',
+    secondary: 'bg-[#C9A84C] hover:bg-[#A0843A] text-white shadow-sm hover:shadow-md active:scale-[0.98]',
     outline: 'border border-slate-300 hover:bg-slate-50 text-slate-700 active:scale-[0.98]',
     danger: 'bg-red-600 hover:bg-red-700 text-white shadow-sm active:scale-[0.98]',
     ghost: 'hover:bg-slate-100 text-slate-700'

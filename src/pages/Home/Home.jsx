@@ -116,77 +116,96 @@ export const Home = () => {
       {/* ═══════════════════════════════
           HERO — Editorial & Purposeful
       ═══════════════════════════════ */}
-      <section id="home" style={{ display: 'grid', gridTemplateColumns: '12fr 10fr', minHeight: '85vh', background: 'var(--slate)' }} className="hero-section">
+      <section id="home" style={{ display: 'grid', gridTemplateColumns: '12fr 10fr', minHeight: '88vh', background: 'var(--slate)', position: 'relative', overflow: 'hidden' }} className="hero-section">
+
+        {/* Subtle grid texture overlay */}
+        <div style={{ position: 'absolute', inset: 0, backgroundImage: 'linear-gradient(rgba(255,255,255,0.025) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.025) 1px, transparent 1px)', backgroundSize: '48px 48px', pointerEvents: 'none', zIndex: 0 }} />
+
+        {/* Accent gradient top bar */}
+        <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 3, background: 'linear-gradient(to right, var(--gold), var(--cobalt), var(--gold))', zIndex: 10 }} />
+
+        {/* Soft radial glow left */}
+        <div style={{ position: 'absolute', top: '-10%', left: '-5%', width: '60%', height: '80%', background: 'radial-gradient(ellipse, rgba(29,78,216,0.08) 0%, transparent 65%)', pointerEvents: 'none', zIndex: 0 }} />
 
         {/* LEFT: Text & Content */}
-        <div style={{ padding: '80px 60px 80px 80px', display: 'flex', flexDirection: 'column', justifyContent: 'center', position: 'relative', zIndex: 2 }} className="hero-left">
+        <div style={{ padding: '88px 60px 80px 80px', display: 'flex', flexDirection: 'column', justifyContent: 'center', position: 'relative', zIndex: 2 }} className="hero-left">
 
-          <div style={{ display: 'inline-flex', alignItems: 'center', gap: 8, marginBottom: 28 }}>
-            <span style={{ width: 6, height: 6, borderRadius: '50%', background: 'var(--gold)' }} />
+          <div style={{ display: 'inline-flex', alignItems: 'center', gap: 8, marginBottom: 28, padding: '6px 14px', borderRadius: 100, border: '1.5px solid rgba(201,168,76,0.25)', background: 'rgba(201,168,76,0.07)', width: 'fit-content' }}>
+            <span style={{ width: 6, height: 6, borderRadius: '50%', background: 'var(--gold)', display: 'inline-block' }} />
             <span style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: 11, fontWeight: 700, color: 'var(--gold)', letterSpacing: '0.2em', textTransform: 'uppercase' }}>
               Global Manpower Solutions
             </span>
           </div>
 
-          <h1 style={{ fontFamily: "'Playfair Display', serif", fontSize: 'clamp(36px, 4.2vw, 60px)', fontWeight: 700, color: '#fff', lineHeight: 1.15, letterSpacing: '-0.02em', marginBottom: 24 }}>
+          <h1 style={{ fontFamily: "'Playfair Display', serif", fontSize: 'clamp(36px, 4.2vw, 62px)', fontWeight: 700, color: '#fff', lineHeight: 1.12, letterSpacing: '-0.02em', marginBottom: 24 }}>
             Connecting the <em style={{ color: 'var(--gold)', fontStyle: 'italic' }}>Right People</em>
             <br />With the Right Opportunities.
           </h1>
 
-          <p style={{ color: 'rgba(255,255,255,0.7)', fontSize: 15.5, lineHeight: 1.75, maxWidth: 480, marginBottom: 40, fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
+          <p style={{ color: 'rgba(255,255,255,0.65)', fontSize: 15.5, lineHeight: 1.78, maxWidth: 480, marginBottom: 40, fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
             A premier MEA-licensed manpower agency delivering ethical recruitment, candidate trade testing, and overseas deployment solutions for international infrastructure, industrial, and commercial enterprises.
           </p>
 
           <div style={{ display: 'flex', gap: 14, flexWrap: 'wrap', marginBottom: 48 }}>
             <Link to="/contact-info" id="hero-get-manpower"
-              style={{ display: 'inline-flex', alignItems: 'center', gap: 8, padding: '14px 30px', background: 'var(--gold)', color: 'var(--slate)', fontFamily: "'Plus Jakarta Sans', sans-serif", fontWeight: 700, fontSize: 14, borderRadius: 10, textDecoration: 'none', transition: 'all 0.25s ease' }}
-              onMouseEnter={e => { e.currentTarget.style.background = 'var(--gold-light)'; e.currentTarget.style.transform = 'translateY(-2px)'; }}
-              onMouseLeave={e => { e.currentTarget.style.background = 'var(--gold)'; e.currentTarget.style.transform = 'translateY(0)'; }}
+              style={{ display: 'inline-flex', alignItems: 'center', gap: 8, padding: '15px 32px', background: 'var(--gold)', color: 'var(--slate)', fontFamily: "'Plus Jakarta Sans', sans-serif", fontWeight: 700, fontSize: 14, borderRadius: 10, textDecoration: 'none', transition: 'all 0.25s ease', boxShadow: '0 8px 24px rgba(201,168,76,0.25)' }}
+              onMouseEnter={e => { e.currentTarget.style.background = 'var(--gold-light)'; e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.boxShadow = '0 12px 32px rgba(201,168,76,0.35)'; }}
+              onMouseLeave={e => { e.currentTarget.style.background = 'var(--gold)'; e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = '0 8px 24px rgba(201,168,76,0.25)'; }}
             >
               Get Manpower <svg width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
             </Link>
             <Link to="/contact-info" id="hero-contact-us"
-              style={{ display: 'inline-flex', alignItems: 'center', gap: 8, padding: '12px 28px', background: 'transparent', color: 'rgba(255,255,255,0.85)', fontFamily: "'Plus Jakarta Sans', sans-serif", fontWeight: 600, fontSize: 14, borderRadius: 10, textDecoration: 'none', border: '1.5px solid rgba(255,255,255,0.25)', transition: 'all 0.25s ease' }}
-              onMouseEnter={e => { e.currentTarget.style.background = 'rgba(255,255,255,0.08)'; e.currentTarget.style.borderColor = 'rgba(255,255,255,0.5)'; }}
-              onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.borderColor = 'rgba(255,255,255,0.25)'; }}
+              style={{ display: 'inline-flex', alignItems: 'center', gap: 8, padding: '13px 28px', background: 'rgba(255,255,255,0.06)', color: 'rgba(255,255,255,0.9)', fontFamily: "'Plus Jakarta Sans', sans-serif", fontWeight: 600, fontSize: 14, borderRadius: 10, textDecoration: 'none', border: '1.5px solid rgba(255,255,255,0.2)', transition: 'all 0.25s ease', backdropFilter: 'blur(8px)' }}
+              onMouseEnter={e => { e.currentTarget.style.background = 'rgba(255,255,255,0.12)'; e.currentTarget.style.borderColor = 'rgba(255,255,255,0.45)'; e.currentTarget.style.transform = 'translateY(-1px)'; }}
+              onMouseLeave={e => { e.currentTarget.style.background = 'rgba(255,255,255,0.06)'; e.currentTarget.style.borderColor = 'rgba(255,255,255,0.2)'; e.currentTarget.style.transform = 'translateY(0)'; }}
             >Contact Us</Link>
           </div>
 
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 10, paddingTop: 20, borderTop: '1px solid rgba(255,255,255,0.1)' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 10, paddingTop: 22, borderTop: '1px solid rgba(255,255,255,0.08)' }}>
             {[
               `MEA License: ${LICENSE_NO}`,
               `Government Reg No: ${RA_NO}`,
               '100% Transparent & Compliant Recruitment Process'
             ].map((b, i) => (
-              <div key={i} style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: 12.5, fontWeight: 500, color: 'rgba(255,255,255,0.65)', display: 'flex', alignItems: 'center', gap: 8 }}>
-                <span style={{ color: 'var(--gold)', fontSize: 14 }}>✓</span> {b}
+              <div key={i} style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: 12.5, fontWeight: 500, color: 'rgba(255,255,255,0.55)', display: 'flex', alignItems: 'center', gap: 8 }}>
+                <span style={{ width: 18, height: 18, borderRadius: '50%', background: 'rgba(201,168,76,0.15)', border: '1px solid rgba(201,168,76,0.3)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                  <span style={{ color: 'var(--gold)', fontSize: 10, fontWeight: 900, lineHeight: 1 }}>✓</span>
+                </span>
+                {b}
               </div>
             ))}
           </div>
         </div>
 
         {/* RIGHT: Authentic Editorial Photo */}
-        <div style={{ position: 'relative', overflow: 'hidden', background: '#0f1a35', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 40 }} className="hero-right">
-          <div style={{ position: 'relative', width: '100%', height: '100%', maxHeight: 520, borderRadius: 16, overflow: 'hidden', border: '1.5px solid rgba(255,255,255,0.15)', boxShadow: '0 20px 50px rgba(0,0,0,0.3)' }}>
-            <img src="/images/modern_indian_skilled_trades.jpeg" alt="Professional Manpower Workforce" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-            <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to top, rgba(26,39,68,0.7) 0%, transparent 60%)' }} />
-            <div style={{ position: 'absolute', bottom: 24, left: 24, right: 24, color: '#fff' }}>
-              <div style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: 11, fontWeight: 700, letterSpacing: '0.15em', textTransform: 'uppercase', color: 'var(--gold)', marginBottom: 4 }}>Certified Technical Workforce</div>
-              <div style={{ fontFamily: "'Playfair Display', serif", fontSize: 20, fontWeight: 600 }}>Skilled trades ready for international deployment</div>
+        <div style={{ position: 'relative', overflow: 'hidden', background: '#0a1220', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '40px 48px 40px 32px' }} className="hero-right">
+          {/* Decorative corner accent */}
+          <div style={{ position: 'absolute', top: 24, right: 24, width: 48, height: 48, border: '2px solid rgba(201,168,76,0.2)', borderRadius: 8, pointerEvents: 'none' }} />
+          <div style={{ position: 'absolute', bottom: 24, left: 24, width: 32, height: 32, border: '2px solid rgba(29,78,216,0.2)', borderRadius: 6, pointerEvents: 'none' }} />
+
+          <div style={{ position: 'relative', width: '100%', height: '100%', maxHeight: 540, borderRadius: 18, overflow: 'hidden', border: '1.5px solid rgba(255,255,255,0.10)', boxShadow: '0 24px 60px rgba(0,0,0,0.4)' }}>
+            <img src="/images/modern_indian_skilled_trades.jpeg" alt="Professional Manpower Workforce" style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center top' }} />
+            {/* Multi-layer gradient for depth */}
+            <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to top, rgba(13,17,23,0.85) 0%, rgba(26,39,68,0.3) 50%, transparent 100%)' }} />
+            <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to right, rgba(10,18,32,0.4) 0%, transparent 40%)' }} />
+            {/* Caption */}
+            <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, padding: '24px 28px', borderTop: '1px solid rgba(255,255,255,0.08)' }}>
+              <div style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: 10.5, fontWeight: 700, letterSpacing: '0.16em', textTransform: 'uppercase', color: 'var(--gold)', marginBottom: 5 }}>Certified Technical Workforce</div>
+              <div style={{ fontFamily: "'Playfair Display', serif", fontSize: 19, fontWeight: 600, color: '#fff', lineHeight: 1.3 }}>Skilled trades ready for international deployment</div>
             </div>
           </div>
         </div>
 
         <style>{`
-          .hero-section { grid-template-columns: 12fr 10fr; min-height: 85vh; }
+          .hero-section { grid-template-columns: 12fr 10fr; min-height: 88vh; }
           @media (max-width: 960px) {
-            .hero-section { grid-template-columns: 1fr !important; }
-            .hero-left { padding: 60px 32px 48px !important; }
-            .hero-right { padding: 0 32px 48px !important; min-height: 380px !important; }
+            .hero-section { grid-template-columns: 1fr !important; min-height: auto !important; }
+            .hero-left { padding: 72px 32px 48px !important; }
+            .hero-right { padding: 0 32px 56px !important; min-height: 380px !important; }
           }
           @media (max-width: 640px) {
-            .hero-left { padding: 40px 20px 32px !important; }
-            .hero-right { padding: 0 20px 40px !important; min-height: 300px !important; }
+            .hero-left { padding: 48px 20px 36px !important; }
+            .hero-right { padding: 0 20px 44px !important; min-height: 300px !important; }
           }
         `}</style>
       </section>
@@ -194,19 +213,24 @@ export const Home = () => {
       {/* ═══════════════════════════════
           TRUST INFORMATION STRIP
       ═══════════════════════════════ */}
-      <div style={{ background: 'var(--cream)', borderBottom: '1.5px solid var(--fog)' }}>
+      <div style={{ background: 'var(--ivory)', borderBottom: '1.5px solid var(--fog)', boxShadow: '0 4px 16px rgba(13,17,23,0.05)' }}>
         <div style={{ maxWidth: 1200, margin: '0 auto', display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)' }} className="trust-grid">
           {[
-            { value: ESTABLISHED_YEAR, label: 'Established', sub: 'Foundational Operations' },
-            { value: '10+ Years', label: 'Experience', sub: 'Overseas Manpower' },
-            { value: RA_NO, label: 'Registration', sub: 'Government Approved', mono: true },
-            { value: 'Buxar, Bihar', label: 'Head Office', sub: 'India Operations' },
+            { value: ESTABLISHED_YEAR, label: 'Established', sub: 'Foundational Operations', icon: '📅' },
+            { value: '10+ Years', label: 'Experience', sub: 'Overseas Manpower', icon: '🌐' },
+            { value: RA_NO, label: 'Registration', sub: 'Government Approved', mono: true, icon: '📋' },
+            { value: 'Buxar, Bihar', label: 'Head Office', sub: 'India Operations', icon: '🏢' },
           ].map((s, i) => (
-            <div key={i} style={{ padding: '36px 32px', borderRight: i < 3 ? '1px solid var(--fog)' : 'none', display: 'flex', flexDirection: 'column', gap: 6 }} className={`scroll-reveal stagger-${i+1}`}>
-              <div style={{ fontFamily: s.mono ? "'JetBrains Mono', monospace" : "'Playfair Display', serif", fontSize: s.mono ? 16 : 36, fontWeight: 700, color: 'var(--slate)', lineHeight: 1.1 }}>
+            <div key={i} style={{ padding: '32px 28px', borderRight: i < 3 ? '1px solid var(--fog)' : 'none', display: 'flex', flexDirection: 'column', gap: 4, position: 'relative', transition: 'background 0.2s ease' }} className={`scroll-reveal stagger-${i+1} trust-cell`}
+              onMouseEnter={e => { e.currentTarget.style.background = 'rgba(201,168,76,0.03)'; }}
+              onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; }}
+            >
+              {/* Gold accent bottom line on hover */}
+              <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: 2, background: 'linear-gradient(to right, var(--gold), transparent)', transform: 'scaleX(0)', transformOrigin: 'left', transition: 'transform 0.3s ease' }} className="trust-accent" />
+              <div style={{ fontFamily: s.mono ? "'JetBrains Mono', monospace" : "'Playfair Display', serif", fontSize: s.mono ? 15 : 34, fontWeight: 700, color: 'var(--slate)', lineHeight: 1.1 }}>
                 {s.value}
               </div>
-              <div style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: 11.5, fontWeight: 700, color: 'var(--charcoal)', textTransform: 'uppercase', letterSpacing: '0.08em', marginTop: 4 }}>{s.label}</div>
+              <div style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: 11, fontWeight: 700, color: 'var(--charcoal)', textTransform: 'uppercase', letterSpacing: '0.1em', marginTop: 6 }}>{s.label}</div>
               <div style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: 12, color: 'var(--steel)' }}>{s.sub}</div>
             </div>
           ))}
@@ -215,6 +239,7 @@ export const Home = () => {
           .trust-grid { grid-template-columns: repeat(4, 1fr); }
           @media (max-width: 900px) { .trust-grid { grid-template-columns: repeat(2, 1fr) !important; } }
           @media (max-width: 480px) { .trust-grid { grid-template-columns: 1fr !important; } }
+          .trust-cell:hover .trust-accent { transform: scaleX(1) !important; }
         `}</style>
       </div>
 
@@ -677,36 +702,62 @@ export const Home = () => {
       {/* ═══════════════════════════════
           MAIN CTA — Strategic Footer Lead
       ═══════════════════════════════ */}
-      <section style={{ background: '#0d1420', padding: '80px 60px', textAlign: 'center', color: '#fff' }} className="main-cta-section">
-        <div style={{ maxWidth: 640, margin: '0 auto' }}>
-          <h2 style={{ fontFamily: "'Playfair Display', serif", fontSize: 'clamp(26px, 3.5vw, 48px)', fontWeight: 700, lineHeight: 1.2, marginBottom: 16 }}>
-            Ready to Build Your International Team?
+      <section style={{ background: 'linear-gradient(135deg, #0a1220 0%, #0d1a35 50%, #0a1220 100%)', padding: '88px 60px', textAlign: 'center', color: '#fff', position: 'relative', overflow: 'hidden' }} className="main-cta-section">
+        {/* Background texture */}
+        <div style={{ position: 'absolute', inset: 0, backgroundImage: 'radial-gradient(rgba(255,255,255,0.02) 1.5px, transparent 1.5px)', backgroundSize: '28px 28px', pointerEvents: 'none' }} />
+        {/* Gold accent top bar */}
+        <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 3, background: 'linear-gradient(to right, var(--gold), var(--cobalt), var(--gold))' }} />
+        {/* Radial glow */}
+        <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', width: '70%', height: '100%', background: 'radial-gradient(ellipse, rgba(29,78,216,0.07) 0%, transparent 65%)', pointerEvents: 'none' }} />
+
+        <div style={{ maxWidth: 600, margin: '0 auto', position: 'relative', zIndex: 1 }}>
+          <div style={{ display: 'inline-flex', alignItems: 'center', gap: 8, padding: '5px 14px', borderRadius: 100, border: '1.5px solid rgba(201,168,76,0.25)', background: 'rgba(201,168,76,0.07)', marginBottom: 20 }}>
+            <span style={{ width: 5, height: 5, borderRadius: '50%', background: 'var(--gold)', display: 'inline-block', animation: 'pulse-dot 2s infinite' }} />
+            <span style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: 11, fontWeight: 700, color: 'var(--gold)', letterSpacing: '0.18em', textTransform: 'uppercase' }}>Start Your Journey</span>
+          </div>
+          <h2 style={{ fontFamily: "'Playfair Display', serif", fontSize: 'clamp(28px, 3.5vw, 50px)', fontWeight: 700, lineHeight: 1.18, marginBottom: 18 }}>
+            Ready to Build Your <em style={{ color: 'var(--gold)', fontStyle: 'italic' }}>International Team?</em>
           </h2>
-          <p style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: 15, color: 'rgba(255,255,255,0.6)', lineHeight: 1.7, marginBottom: 36 }}>
+          <p style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: 15, color: 'rgba(255,255,255,0.55)', lineHeight: 1.75, marginBottom: 40, maxWidth: 500, margin: '0 auto 40px' }}>
             Contact our senior recruitment specialists at RKR Globalpath HR Manpower for tailored manpower solutions and official documentation advice.
           </p>
           <div style={{ display: 'flex', gap: 16, justifyContent: 'center', flexWrap: 'wrap' }}>
             <Link to="/contact-info" id="cta-final-manpower"
-              style={{ display: 'inline-flex', alignItems: 'center', gap: 8, padding: '14px 32px', background: 'var(--gold)', color: 'var(--slate)', fontFamily: "'Plus Jakarta Sans', sans-serif", fontWeight: 700, fontSize: 14, borderRadius: 10, textDecoration: 'none', transition: 'all 0.25s ease' }}
-              onMouseEnter={e => { e.currentTarget.style.background = 'var(--gold-light)'; }}
-              onMouseLeave={e => { e.currentTarget.style.background = 'var(--gold)'; }}
+              style={{ display: 'inline-flex', alignItems: 'center', gap: 8, padding: '15px 34px', background: 'var(--gold)', color: 'var(--slate)', fontFamily: "'Plus Jakarta Sans', sans-serif", fontWeight: 700, fontSize: 14, borderRadius: 10, textDecoration: 'none', transition: 'all 0.25s ease', boxShadow: '0 8px 28px rgba(201,168,76,0.3)' }}
+              onMouseEnter={e => { e.currentTarget.style.background = 'var(--gold-light)'; e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.boxShadow = '0 12px 36px rgba(201,168,76,0.4)'; }}
+              onMouseLeave={e => { e.currentTarget.style.background = 'var(--gold)'; e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = '0 8px 28px rgba(201,168,76,0.3)'; }}
             >
               Get Manpower Now <svg width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
             </Link>
             <a href={`tel:${CONTACT_INFO.phone}`}
-              style={{ display: 'inline-flex', alignItems: 'center', gap: 8, padding: '13px 28px', background: 'transparent', color: 'rgba(255,255,255,0.85)', fontFamily: "'Plus Jakarta Sans', sans-serif", fontWeight: 600, fontSize: 14, borderRadius: 10, textDecoration: 'none', border: '1.5px solid rgba(255,255,255,0.2)', transition: 'all 0.25s ease' }}
-              onMouseEnter={e => { e.currentTarget.style.background = 'rgba(255,255,255,0.08)'; }}
-              onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; }}
+              style={{ display: 'inline-flex', alignItems: 'center', gap: 8, padding: '13px 28px', background: 'rgba(255,255,255,0.06)', color: 'rgba(255,255,255,0.88)', fontFamily: "'Plus Jakarta Sans', sans-serif", fontWeight: 600, fontSize: 14, borderRadius: 10, textDecoration: 'none', border: '1.5px solid rgba(255,255,255,0.18)', transition: 'all 0.25s ease', backdropFilter: 'blur(8px)' }}
+              onMouseEnter={e => { e.currentTarget.style.background = 'rgba(255,255,255,0.12)'; e.currentTarget.style.borderColor = 'rgba(255,255,255,0.35)'; e.currentTarget.style.transform = 'translateY(-1px)'; }}
+              onMouseLeave={e => { e.currentTarget.style.background = 'rgba(255,255,255,0.06)'; e.currentTarget.style.borderColor = 'rgba(255,255,255,0.18)'; e.currentTarget.style.transform = 'translateY(0)'; }}
             >
+              <svg width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.61 3.44C2 2.18 3.04 2 4 2h3a2 2 0 0 1 2 1.72 13 13 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 13 13 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
               Call {CONTACT_INFO.phone}
             </a>
           </div>
         </div>
+        <style>{`
+          .main-cta-section { padding: 88px 60px; }
+          @media (max-width: 1024px) { .main-cta-section { padding: 72px 32px !important; } }
+          @media (max-width: 640px) { .main-cta-section { padding: 56px 20px !important; } }
+        `}</style>
       </section>
 
-      <Modal isOpen={modalOpen} onClose={() => setModalOpen(false)} src={modalContent.src} title={modalContent.title} />
+      {/* Modal */}
+      {modalOpen && (
+        <Modal
+          isOpen={modalOpen}
+          onClose={() => setModalOpen(false)}
+          title={modalContent.title}
+          src={modalContent.src}
+        />
+      )}
     </div>
   );
 };
 
 export default Home;
+

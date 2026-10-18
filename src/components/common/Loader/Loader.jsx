@@ -11,14 +11,16 @@ export const Loader = ({ active = true }) => {
           <div className="loader-ring"></div>
           <div className="loader-ring loader-ring-2"></div>
           <div className="loader-icon">
-            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#e11d48" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M12 2L2 7l10 5 10-5-10-5z"/>
-              <path d="M2 17l10 5 10-5"/>
-              <path d="M2 12l10 5 10-5"/>
+            {/* Globe icon — matches brand identity */}
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#C9A84C" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+              <circle cx="12" cy="12" r="10"/>
+              <path d="M2 12h20"/>
+              <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
             </svg>
           </div>
         </div>
-        <div className="loader-text">RKR Global Path</div>
+        <div className="loader-text">RKR Globalpath</div>
+        <div className="loader-sub">HR &amp; Manpower Solutions</div>
         <div className="loader-bar">
           <div className="loader-bar-fill"></div>
         </div>

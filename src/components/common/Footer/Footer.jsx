@@ -86,7 +86,7 @@ export const Footer = () => {
               </div>
             </div>
 
-            <p style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: 13.5, color: 'rgba(255,255,255,0.45)', lineHeight: 1.7 }}>
+            <p style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: 13.5, color: 'rgba(255,255,255,0.5)', lineHeight: 1.7, paddingLeft: 14, borderLeft: '2px solid rgba(201,168,76,0.25)' }}>
               A premier MEA-approved overseas recruitment partner delivering elite workforce solutions across the Gulf, Middle East, Europe, and Asia since {ESTABLISHED_YEAR}.
             </p>
 
@@ -183,7 +183,7 @@ export const Footer = () => {
                     style={{
                       fontFamily: "'Plus Jakarta Sans', sans-serif",
                       fontSize: 13.5,
-                      color: 'rgba(255,255,255,0.45)',
+                      color: 'rgba(255,255,255,0.55)',
                       textDecoration: 'none',
                       display: 'flex',
                       alignItems: 'center',
@@ -196,7 +196,7 @@ export const Footer = () => {
                       e.currentTarget.style.gap = '12px';
                     }}
                     onMouseLeave={e => {
-                      e.currentTarget.style.color = 'rgba(255,255,255,0.45)';
+                      e.currentTarget.style.color = 'rgba(255,255,255,0.55)';
                       e.currentTarget.style.gap = '8px';
                     }}
                   >
@@ -235,7 +235,7 @@ export const Footer = () => {
                     style={{
                       fontFamily: "'Plus Jakarta Sans', sans-serif",
                       fontSize: 13.5,
-                      color: 'rgba(255,255,255,0.45)',
+                      color: 'rgba(255,255,255,0.55)',
                       textDecoration: 'none',
                       display: 'flex',
                       alignItems: 'center',
@@ -248,7 +248,7 @@ export const Footer = () => {
                       e.currentTarget.style.gap = '12px';
                     }}
                     onMouseLeave={e => {
-                      e.currentTarget.style.color = 'rgba(255,255,255,0.45)';
+                      e.currentTarget.style.color = 'rgba(255,255,255,0.55)';
                       e.currentTarget.style.gap = '8px';
                     }}
                   >
@@ -366,7 +366,7 @@ export const Footer = () => {
         <div
           style={{
             borderTop: '1px solid rgba(255,255,255,0.08)',
-            paddingTop: 28,
+            paddingTop: 32,
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'space-between',
@@ -374,8 +374,8 @@ export const Footer = () => {
             gap: 16,
           }}
         >
-          <p style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: 12.5, color: 'rgba(255,255,255,0.3)' }}>
-            © {year} <Link to="/" style={{ color: 'rgba(255,255,255,0.5)', textDecoration: 'none', fontWeight: 600 }}>{COMPANY_NAME}</Link>. {t('all_rights_reserved')}.
+          <p style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: 12.5, color: 'rgba(255,255,255,0.35)' }}>
+            © {year} <Link to="/" style={{ color: 'rgba(255,255,255,0.6)', textDecoration: 'none', fontWeight: 600 }}>{COMPANY_NAME}</Link>. {t('all_rights_reserved')}.
           </p>
 
           {/* License pill */}

@@ -55,7 +55,7 @@ export const WhyUs = () => {
             {/* Reason 1 */}
             <div className="flex gap-4 scroll-fade-in-left">
               <div className="flex-shrink-0">
-                <div className="flex items-center justify-center h-14 w-14 rounded-xl bg-gradient-to-br from-[#e11d48] to-[#be123c] text-white shadow-md">
+                <div className="flex items-center justify-center h-14 w-14 rounded-xl bg-gradient-to-br from-[#C9A84C] to-[#A0843A] text-white shadow-md">
                   <svg className="h-7 w-7" fill="currentColor" viewBox="0 0 20 20">
                     <path fillRule="evenodd" d="M6.267 3.455a3.066 3.066 0 001.745-.723 3.066 3.066 0 013.976 0 3.066 3.066 0 001.745.723 3.066 3.066 0 012.812 3.062v6.218c0 1.695-.603 2.933-1.391 3.467.19.294.335.652.335 1.035 0 1.641-1.487 3-3.322 3H7.631c-1.835 0-3.322-1.359-3.322-3 0-.383.145-.74.335-1.035-.788-.534-1.391-1.772-1.391-3.467V6.518c0-1.691.977-3.149 2.414-3.063z" clipRule="evenodd" />
                   </svg>
@@ -73,7 +73,7 @@ export const WhyUs = () => {
             {/* Reason 2 */}
             <div className="flex gap-4 scroll-fade-in-right">
               <div className="flex-shrink-0">
-                <div className="flex items-center justify-center h-14 w-14 rounded-xl bg-gradient-to-br from-[#e11d48] to-[#be123c] text-white shadow-md">
+                <div className="flex items-center justify-center h-14 w-14 rounded-xl bg-gradient-to-br from-[#C9A84C] to-[#A0843A] text-white shadow-md">
                   <svg className="h-7 w-7" fill="currentColor" viewBox="0 0 20 20">
                     <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
                   </svg>
@@ -91,7 +91,7 @@ export const WhyUs = () => {
             {/* Reason 3 */}
             <div className="flex gap-4 scroll-fade-in-left">
               <div className="flex-shrink-0">
-                <div className="flex items-center justify-center h-14 w-14 rounded-xl bg-gradient-to-br from-[#e11d48] to-[#be123c] text-white shadow-md">
+                <div className="flex items-center justify-center h-14 w-14 rounded-xl bg-gradient-to-br from-[#C9A84C] to-[#A0843A] text-white shadow-md">
                   <svg className="h-7 w-7" fill="currentColor" viewBox="0 0 20 20">
                     <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
                   </svg>
@@ -109,7 +109,7 @@ export const WhyUs = () => {
             {/* Reason 4 */}
             <div className="flex gap-4 scroll-fade-in-right">
               <div className="flex-shrink-0">
-                <div className="flex items-center justify-center h-14 w-14 rounded-xl bg-gradient-to-br from-[#e11d48] to-[#be123c] text-white shadow-md">
+                <div className="flex items-center justify-center h-14 w-14 rounded-xl bg-gradient-to-br from-[#C9A84C] to-[#A0843A] text-white shadow-md">
                   <svg className="h-7 w-7" fill="currentColor" viewBox="0 0 20 20">
                     <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
                   </svg>
@@ -127,7 +127,7 @@ export const WhyUs = () => {
             {/* Reason 5 */}
             <div className="flex gap-4 scroll-fade-in-left">
               <div className="flex-shrink-0">
-                <div className="flex items-center justify-center h-14 w-14 rounded-xl bg-gradient-to-br from-[#e11d48] to-[#be123c] text-white shadow-md">
+                <div className="flex items-center justify-center h-14 w-14 rounded-xl bg-gradient-to-br from-[#C9A84C] to-[#A0843A] text-white shadow-md">
                   <svg className="h-7 w-7" fill="currentColor" viewBox="0 0 20 20">
                     <path d="M11 3a1 1 0 10-2 0v1a1 1 0 102 0V3zM15.657 5.757a1 1 0 00-1.414-1.414l-.707.707a1 1 0 001.414 1.414l.707-.707zM18 10a1 1 0 01-1 1h-1a1 1 0 110-2h1a1 1 0 011 1zM16.243 15.657a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414l.707.707zM10 16a1 1 0 01-1-1v-1a1 1 0 112 0v1a1 1 0 01-1 1zM5.757 15.657l-.707.707a1 1 0 001.414 1.414l.707-.707a1 1 0 00-1.414-1.414zM4 10a1 1 0 011-1h1a1 1 0 110 2H5a1 1 0 01-1-1zM5.757 4.343l.707-.707a1 1 0 00-1.414-1.414l-.707.707a1 1 0 001.414 1.414z" />
                   </svg>
@@ -145,7 +145,7 @@ export const WhyUs = () => {
             {/* Reason 6 */}
             <div className="flex gap-4 scroll-fade-in-right">
               <div className="flex-shrink-0">
-                <div className="flex items-center justify-center h-14 w-14 rounded-xl bg-gradient-to-br from-[#e11d48] to-[#be123c] text-white shadow-md">
+                <div className="flex items-center justify-center h-14 w-14 rounded-xl bg-gradient-to-br from-[#C9A84C] to-[#A0843A] text-white shadow-md">
                   <svg className="h-7 w-7" fill="currentColor" viewBox="0 0 20 20">
                     <path fillRule="evenodd" d="M12 7a1 1 0 110-2h.01a1 1 0 110 2H12zm-1.763 3.546a.75.75 0 001.06 1.06A2.25 2.25 0 1010 5.25a.75.75 0 00-1.5 0v2.546zM10 12a.75.75 0 110-1.5h.01a.75.75 0 110 1.5H10z" clipRule="evenodd" />
                   </svg>

@@ -61,7 +61,6 @@ export const FloatingActions = () => {
 
   return (
     <>
-      {/* ── Desktop Floating Pill Stack ── */}
       <div
         aria-label="Quick contact actions"
         style={{
@@ -72,7 +71,7 @@ export const FloatingActions = () => {
           zIndex: 500,
           display: 'flex',
           flexDirection: 'column',
-          gap: 6,
+          gap: 8,
           transition: 'transform 0.5s cubic-bezier(0.16,1,0.3,1)',
         }}
         className="floating-actions-desktop"
@@ -85,30 +84,33 @@ export const FloatingActions = () => {
             rel={a.id === 'wa' ? 'noopener noreferrer' : undefined}
             aria-label={a.label}
             title={a.label}
+            className={a.id === 'wa' ? 'whatsapp-float-btn' : ''}
             style={{
               display: 'flex',
               alignItems: 'center',
               gap: 10,
-              padding: '10px 18px 10px 14px',
+              padding: '11px 20px 11px 14px',
               background: a.bg,
               color: '#fff',
               textDecoration: 'none',
-              borderRadius: '24px 0 0 24px',
+              borderRadius: '28px 0 0 28px',
               fontSize: 13,
               fontFamily: "'Plus Jakarta Sans', sans-serif",
               fontWeight: 700,
-              boxShadow: '-4px 4px 16px rgba(13,17,23,0.18)',
-              transition: 'all 0.25s ease',
-              transform: expanded ? 'translateX(0)' : 'translateX(52px)',
-              minWidth: 130,
+              boxShadow: a.id === 'wa' ? '-4px 4px 20px rgba(37,211,102,0.3)' : '-4px 4px 16px rgba(13,17,23,0.18)',
+              transition: 'transform 0.25s cubic-bezier(0.16,1,0.3,1), background 0.2s ease, box-shadow 0.2s ease',
+              transform: 'translateX(70px)',
+              minWidth: 138,
             }}
             onMouseEnter={(e) => {
               e.currentTarget.style.background = a.hoverBg;
               e.currentTarget.style.transform = 'translateX(0)';
-              setExpanded(true);
+              e.currentTarget.style.boxShadow = a.id === 'wa' ? '-6px 6px 24px rgba(37,211,102,0.4)' : '-6px 6px 24px rgba(13,17,23,0.25)';
             }}
             onMouseLeave={(e) => {
               e.currentTarget.style.background = a.bg;
+              e.currentTarget.style.transform = 'translateX(70px)';
+              e.currentTarget.style.boxShadow = a.id === 'wa' ? '-4px 4px 20px rgba(37,211,102,0.3)' : '-4px 4px 16px rgba(13,17,23,0.18)';
             }}
           >
             <span style={{ flexShrink: 0 }}>{a.icon}</span>
@@ -121,18 +123,20 @@ export const FloatingActions = () => {
       <div
         style={{
           position: 'fixed',
-          bottom: 16,
+          bottom: 20,
           left: '50%',
           transform: 'translateX(-50%)',
           zIndex: 500,
           display: 'none',
           alignItems: 'center',
           gap: 8,
-          background: 'var(--slate)',
-          border: '1.5px solid rgba(255,255,255,0.1)',
+          background: 'rgba(26, 39, 68, 0.92)',
+          border: '1.5px solid rgba(255,255,255,0.12)',
           borderRadius: 100,
-          padding: '8px 16px',
-          boxShadow: '0 8px 32px rgba(13,17,23,0.25)',
+          padding: '8px 12px',
+          boxShadow: '0 12px 40px rgba(13,17,23,0.35)',
+          backdropFilter: 'blur(16px)',
+          WebkitBackdropFilter: 'blur(16px)',
         }}
         className="floating-actions-mobile"
         aria-label="Mobile contact bar"
@@ -144,16 +148,17 @@ export const FloatingActions = () => {
             target={a.id === 'wa' ? '_blank' : undefined}
             rel={a.id === 'wa' ? 'noopener noreferrer' : undefined}
             aria-label={a.label}
+            className={a.id === 'wa' ? 'whatsapp-float-btn' : ''}
             style={{
               display: 'flex',
               alignItems: 'center',
               gap: 6,
-              padding: '9px 18px',
+              padding: '9px 16px',
               background: a.bg,
               color: '#fff',
               textDecoration: 'none',
               borderRadius: 100,
-              fontSize: 13,
+              fontSize: 12.5,
               fontFamily: "'Plus Jakarta Sans', sans-serif",
               fontWeight: 700,
               transition: 'all 0.2s ease',
